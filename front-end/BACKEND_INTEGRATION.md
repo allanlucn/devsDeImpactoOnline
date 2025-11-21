@@ -1,14 +1,6 @@
 # Guia de Integração Back-end (FastAPI)
 
-Este documento descreve os endpoints e estruturas de dados esperados pelo Front-end para integração com a API (FastAPI).
-
-## Configuração de Ambiente
-
-O Front-end deve apontar para a URL da API. Recomenda-se usar uma variável de ambiente:
-
-```env
-VITE_API_URL=http://localhost:8000
-```
+Este documento descreve os endpoints e estruturas de dados esperados pelo Front-end para integração com a API.
 
 ## Arquitetura do Front-end (Camada de API)
 

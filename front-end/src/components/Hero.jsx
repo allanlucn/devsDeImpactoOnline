@@ -12,7 +12,7 @@ const Hero = () => {
         </p>
         <div className="hero-buttons">
           <button className="btn-primary" onClick={() => navigate('/chat')}>Pergunte</button>
-          <button className="btn-secondary">Cadastre-se</button>
+          <button className="btn-secondary" onClick={() => navigate('/onboarding')}>Ativar Radar</button>
         </div>
       </div>
       <div className="right">
