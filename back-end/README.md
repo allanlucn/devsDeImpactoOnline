@@ -8,7 +8,11 @@ python -m venv venv
 ```
 pip install -r requirements.txt
 ```
-3. Execute o servidor
+3. Crie as tabelas no banco
+```
+python init_db.py
+```
+4. Execute o servidor
 ```
 uvicorn main:app --reload
 ```
