@@ -1,0 +1,9 @@
+header{
+    display: flex;
+    justify-content: space-between;
+}
+header ul{
+    display: flex;
+    gap: 8px;
+    justify-content: space-between;
+}
