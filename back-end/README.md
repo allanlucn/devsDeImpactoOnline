@@ -1,0 +1,14 @@
+# Como rodar o projeto
+
+1. Crie o ambiente virtual
+```
+python -m venv venv
+```
+2. Instale as dependencias 
+```
+pip install -r requirements.txt
+```
+3. Execute o servidor
+```
+fastapi dev main.py
+```
