@@ -1,36 +1,22 @@
-from typing import Union
-from fastapi import FastAPI, Depends
-from sqlalchemy.orm import Session
-
-from db.config import engine, get_db
-from schemas import Base
-from schemas.user import User
-
-Base.metadata.create_all(bind=engine)
-
-app = FastAPI()
+from fastapi import FastAPI
+from fastapi.middleware.cors import CORSMiddleware
+from api.v1 import api_router
+from core.config import settings
 
 
-@app.get("/")
-def read_root():
-    return {"Hello": "World"}
+def create_app() -> FastAPI:
+    app = FastAPI(
+        title=settings.app_name,
+        version=settings.app_version
+    )
+    app.add_middleware(
+        CORSMiddleware,
+        allow_origins=settings.cors_origins,
+        allow_credentials=True,
+        allow_methods=["*"],
+        allow_headers=["*"],
+    )
+    app.include_router(api_router)
+    return app
 
-
-@app.get("/items/{item_id}")
-def read_item(item_id: int, q: Union[str, None] = None):
-    return {"item_id": item_id, "q": q}
-
-
-@app.post("/usuarios/")
-def criar_usuario(nome: str, email: str, senha: str, db: Session = Depends(get_db)):
-    novo_usuario = User(nome=nome, email=email, senha=senha)
-    db.add(novo_usuario)
-    db.commit()
-    db.refresh(novo_usuario)
-    return {"id": novo_usuario.id, "nome": novo_usuario.nome, "email": novo_usuario.email}
-
-
-@app.get("/usuarios/")
-def listar_usuarios(db: Session = Depends(get_db)):
-    usuarios = db.query(User).all()
-    return usuarios
+app = create_app()

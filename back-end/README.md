@@ -10,5 +10,5 @@ pip install -r requirements.txt
 ```
 3. Execute o servidor
 ```
-fastapi dev main.py
+uvicorn main:app --reload
 ```
