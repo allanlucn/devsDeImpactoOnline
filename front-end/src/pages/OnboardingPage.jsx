@@ -1,47 +1,47 @@
-import { useState } from 'react';
-import { useNavigate } from 'react-router-dom';
-import '../styles/onboarding.css';
+import { useState } from "react";
+import { useNavigate } from "react-router-dom";
+import "../styles/onboarding.css";
 
 const OnboardingPage = () => {
   const navigate = useNavigate();
   const [step, setStep] = useState(1);
   const [isSubmitting, setIsSubmitting] = useState(false);
-  const [loadingMessage, setLoadingMessage] = useState('');
-  
+  const [loadingMessage, setLoadingMessage] = useState("");
+
   // Form Data State
   const [formData, setFormData] = useState({
-    occupation: '',
-    gender: '',
-    race: '',
+    occupation: "",
+    gender: "",
+    race: "",
     isLgbtq: false,
     isSingleParent: false,
-    state: '',
+    state: "",
     alertUrgent: false,
     alertPolls: false,
-    phone: ''
+    phone: "",
   });
 
   const totalSteps = 3;
 
   const occupations = [
-    { label: 'Entregador de app', icon: '🛵', subtitle: 'Moto/Bike' },
-    { label: 'Motorista de app', icon: '🚗', subtitle: 'Uber, 99' },
-    { label: 'Construção civil', icon: '👷', subtitle: 'Pedreiro, Servente' },
-    { label: 'Comércio', icon: '🛍️', subtitle: 'Vendedor, Caixa' },
-    { label: 'Saúde', icon: '⚕️', subtitle: 'Enfermagem, Cuidador' },
-    { label: 'Estudante', icon: '🎓', subtitle: 'Bolsista, Uni' }
+    { label: "Entregador de app", icon: "🛵", subtitle: "Moto/Bike" },
+    { label: "Motorista de app", icon: "🚗", subtitle: "Uber, 99" },
+    { label: "Construção civil", icon: "👷", subtitle: "Pedreiro, Servente" },
+    { label: "Comércio", icon: "🛍️", subtitle: "Vendedor, Caixa" },
+    { label: "Saúde", icon: "⚕️", subtitle: "Enfermagem, Cuidador" },
+    { label: "Estudante", icon: "🎓", subtitle: "Bolsista, Uni" },
   ];
 
   const handleInputChange = (e) => {
     const { name, value, type, checked } = e.target;
-    setFormData(prev => ({
+    setFormData((prev) => ({
       ...prev,
-      [name]: type === 'checkbox' ? checked : value
+      [name]: type === "checkbox" ? checked : value,
     }));
   };
 
   const handleOccupationSelect = (occupation) => {
-    setFormData(prev => ({ ...prev, occupation }));
+    setFormData((prev) => ({ ...prev, occupation }));
   };
 
   const nextStep = () => {
@@ -54,17 +54,27 @@ const OnboardingPage = () => {
 
   const handleSubmit = async () => {
     setIsSubmitting(true);
-    setLoadingMessage('Salvando suas preferências...');
+    setLoadingMessage("Salvando suas preferências...");
+
+    const userProfile = {
+      job: formData.job,
+      gender: formData.gender,
+      race: formData.race,
+      state: formData.state,
+    };
+
+    // Salva no localStorage para uso no chat
+    localStorage.setItem("userProfile", JSON.stringify(userProfile));
 
     // Simulate API call
     setTimeout(() => {
-      setLoadingMessage('Configurando seu radar...');
+      setLoadingMessage("Configurando seu radar...");
       setTimeout(() => {
-        setLoadingMessage('Tudo pronto!');
+        setLoadingMessage("Tudo pronto!");
         setTimeout(() => {
           // Here we would send data to backend
           // await api.post('/onboarding', finalData);
-          navigate('/chat');
+          navigate("/chat");
         }, 1000);
       }, 1500);
     }, 1500);
@@ -77,19 +87,25 @@ const OnboardingPage = () => {
     <div className="onboarding-content">
       <div className="step-header">
         <h2>Qual é o seu corre?</h2>
-        <p className="step-description">Para a IA filtrar apenas o alertas que afetam a sua vida.</p>
+        <p className="step-description">
+          Para a IA filtrar apenas o alertas que afetam a sua vida.
+        </p>
       </div>
-      
+
       <div className="options-grid">
-        {occupations.map(opt => (
+        {occupations.map((opt) => (
           <button
             key={opt.label}
-            className={`option-card ${formData.occupation === opt.label ? 'selected' : ''}`}
+            className={`option-card ${
+              formData.occupation === opt.label ? "selected" : ""
+            }`}
             onClick={() => handleOccupationSelect(opt.label)}
           >
             <span className="option-icon">{opt.icon}</span>
             <span className="option-label">{opt.label}</span>
-            {opt.subtitle && <span className="option-subtitle">{opt.subtitle}</span>}
+            {opt.subtitle && (
+              <span className="option-subtitle">{opt.subtitle}</span>
+            )}
           </button>
         ))}
       </div>
@@ -100,13 +116,19 @@ const OnboardingPage = () => {
     <div className="onboarding-content">
       <div className="step-header">
         <h2>Quem é você?</h2>
-        <p className="step-description">Leis podem mudar dependendo de quem você é e onde mora.</p>
+        <p className="step-description">
+          Leis podem mudar dependendo de quem você é e onde mora.
+        </p>
       </div>
 
       <div className="form-grid-2col">
         <div className="form-group">
           <label>Gênero</label>
-          <select name="gender" value={formData.gender} onChange={handleInputChange}>
+          <select
+            name="gender"
+            value={formData.gender}
+            onChange={handleInputChange}
+          >
             <option value="">Selecione...</option>
             <option value="Mulher">Mulher</option>
             <option value="Homem">Homem</option>
@@ -116,7 +138,11 @@ const OnboardingPage = () => {
 
         <div className="form-group">
           <label>Raça/Cor</label>
-          <select name="race" value={formData.race} onChange={handleInputChange}>
+          <select
+            name="race"
+            value={formData.race}
+            onChange={handleInputChange}
+          >
             <option value="">Selecione...</option>
             <option value="Branca">Branca</option>
             <option value="Negra/Parda">Negra/Parda</option>
@@ -167,11 +193,15 @@ const OnboardingPage = () => {
     <div className="onboarding-content">
       <div className="step-header">
         <h2>Ativar Radar</h2>
-        <p className="step-description">Último passo para ativar sua proteção.</p>
+        <p className="step-description">
+          Último passo para ativar sua proteção.
+        </p>
       </div>
 
       <div className="checkbox-group vertical">
-        <label className={`checkbox-card ${formData.alertUrgent ? 'selected' : ''}`}>
+        <label
+          className={`checkbox-card ${formData.alertUrgent ? "selected" : ""}`}
+        >
           <input
             type="checkbox"
             name="alertUrgent"
@@ -180,11 +210,15 @@ const OnboardingPage = () => {
           />
           <div className="text">
             <strong>Alertas Urgentes</strong>
-            <span>Quando tiver lei que pode ferrar ou ajudar seu trabalho.</span>
+            <span>
+              Quando tiver lei que pode ferrar ou ajudar seu trabalho.
+            </span>
           </div>
         </label>
 
-        <label className={`checkbox-card ${formData.alertPolls ? 'selected' : ''}`}>
+        <label
+          className={`checkbox-card ${formData.alertPolls ? "selected" : ""}`}
+        >
           <input
             type="checkbox"
             name="alertPolls"
@@ -228,19 +262,21 @@ const OnboardingPage = () => {
       <div className="onboarding-container">
         <header className="onboarding-header">
           <div className="header-top">
-            <button 
-              className="btn-back-icon" 
-              onClick={prevStep} 
+            <button
+              className="btn-back-icon"
+              onClick={prevStep}
               title="Voltar"
-              style={{ visibility: step > 1 ? 'visible' : 'hidden' }}
+              style={{ visibility: step > 1 ? "visible" : "hidden" }}
             >
               ←
             </button>
-            <div className="step-indicator">Passo {step} de {totalSteps}</div>
+            <div className="step-indicator">
+              Passo {step} de {totalSteps}
+            </div>
           </div>
           <div className="progress-bar-container">
-            <div 
-              className="progress-bar-fill" 
+            <div
+              className="progress-bar-fill"
               style={{ width: `${progressPercent}%` }}
             ></div>
           </div>
@@ -254,10 +290,12 @@ const OnboardingPage = () => {
 
         <div className="onboarding-actions">
           {step < 3 ? (
-            <button className="btn-primary" onClick={nextStep}>Continuar &gt;</button>
+            <button className="btn-primary" onClick={nextStep}>
+              Continuar &gt;
+            </button>
           ) : (
-            <button 
-              className="btn-primary" 
+            <button
+              className="btn-primary"
               onClick={handleSubmit}
               disabled={!formData.phone || formData.phone.length < 8}
             >
