@@ -43,7 +43,7 @@ def create_app() -> FastAPI:
         application.include_router(api_router) # Geralmente inclui prefixo /api/v1 internamente
     
     if agents_router:
-        application.include_router(agents_router, prefix="/agents", tags=["Agents"])
+        application.include_router(agents_router)
 
     # 6. Rota Raiz (Health Check)
     @application.get("/")
