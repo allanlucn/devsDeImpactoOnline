@@ -1,43 +1,41 @@
-const GROQ_API_KEY = import.meta.env.VITE_GROQ_API_KEY;
-const GROQ_API_URL = 'https://api.groq.com/openai/v1/chat/completions';
-const MODEL = 'llama-3.3-70b-versatile';
+// URL do back-end (ajuste conforme necessário)
+const API_BASE_URL =
+  import.meta.env.VITE_API_BASE_URL || "http://localhost:8000";
 
-export const sendMessageToApi = async (message) => {
+export const sendMessageToApi = async (message, profile = {}) => {
   try {
-    const response = await fetch(GROQ_API_URL, {
-      method: 'POST',
+    const response = await fetch(`${API_BASE_URL}/api/v1/chat`, {
+      method: "POST",
       headers: {
-        'Content-Type': 'application/json',
-        'Authorization': `Bearer ${GROQ_API_KEY}`
+        "Content-Type": "application/json",
       },
       body: JSON.stringify({
-        model: MODEL,
-        messages: [
-          {
-            role: 'user',
-            content: message
-          }
-        ]
-      })
+        message: message,
+        profile: profile, // Perfil do usuário (opcional)
+      }),
     });
 
     if (!response.ok) {
-      throw new Error(`API error: ${response.status}`);
+      const errorData = await response.json().catch(() => ({}));
+      throw new Error(errorData.detail || `API error: ${response.status}`);
     }
 
     const data = await response.json();
-    
+
     return {
       id: Date.now() + 1,
-      sender: 'bot',
-      text: data.choices[0].message.content
+      sender: "bot",
+      text:
+        data.response ||
+        data.text ||
+        "Desculpe, não consegui processar sua mensagem.",
     };
   } catch (error) {
-    console.error('Error calling Groq API:', error);
+    console.error("Error calling chat API:", error);
     return {
       id: Date.now() + 1,
-      sender: 'bot',
-      text: 'Desculpe, ocorreu um erro ao processar sua mensagem. Por favor, tente novamente.'
+      sender: "bot",
+      text: "Desculpe, ocorreu um erro ao processar sua mensagem. Por favor, tente novamente.",
     };
   }
 };
