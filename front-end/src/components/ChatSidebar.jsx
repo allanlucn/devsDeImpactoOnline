@@ -1,5 +1,3 @@
-import React from 'react';
-
 const ChatSidebar = ({ chatHistory, activeChatId, handleNewChat, handleSwitchChat }) => {
   return (
     <aside className="chat-sidebar">

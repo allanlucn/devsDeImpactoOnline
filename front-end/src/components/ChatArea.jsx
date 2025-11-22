@@ -1,5 +1,3 @@
-import React from 'react';
-
 const ChatArea = ({ messages, inputValue, setInputValue, handleSendMessage }) => {
   return (
     <main className="chat-main">

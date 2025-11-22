@@ -2,9 +2,6 @@ const GROQ_API_KEY = import.meta.env.VITE_GROQ_API_KEY;
 const GROQ_API_URL = 'https://api.groq.com/openai/v1/chat/completions';
 const MODEL = 'llama-3.3-70b-versatile';
 
-// Debug: Check if API key is loaded
-console.log('API Key loaded:', GROQ_API_KEY ? `${GROQ_API_KEY.substring(0, 10)}...` : 'NOT FOUND');
-
 export const sendMessageToApi = async (message) => {
   try {
     const response = await fetch(GROQ_API_URL, {

@@ -1,5 +1,3 @@
-import React from 'react';
-
 const NewsSidebar = ({ newsItems, handleLikeNews, handleLikeComment, onSaibaMais }) => {
   return (
     <aside className="news-sidebar">

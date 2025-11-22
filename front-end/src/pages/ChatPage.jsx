@@ -1,5 +1,4 @@
-import React from 'react';
-import '../index.css';
+import '../styles/ChatPage.css';
 import { useChat } from '../hooks/useChat';
 import { useNews } from '../hooks/useNews';
 import ChatSidebar from '../components/ChatSidebar';

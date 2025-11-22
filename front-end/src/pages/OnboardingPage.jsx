@@ -1,4 +1,4 @@
-import React, { useState } from 'react';
+import { useState } from 'react';
 import { useNavigate } from 'react-router-dom';
 import '../styles/onboarding.css';
 
@@ -254,7 +254,7 @@ const OnboardingPage = () => {
 
         <div className="onboarding-actions">
           {step < 3 ? (
-            <button className="btn-primary" onClick={nextStep}>Continuar ></button>
+            <button className="btn-primary" onClick={nextStep}>Continuar &gt;</button>
           ) : (
             <button 
               className="btn-primary" 

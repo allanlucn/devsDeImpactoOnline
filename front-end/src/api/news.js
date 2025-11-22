@@ -30,10 +30,8 @@ export const fetchNewsApi = async () => {
 
 export const likeNewsApi = async (id) => {
   // TODO: Replace with actual API call
-  console.log(`Liked news ${id}`);
 };
 
 export const likeCommentApi = async (newsId, commentId) => {
   // TODO: Replace with actual API call
-  console.log(`Liked comment ${commentId} on news ${newsId}`);
 };
