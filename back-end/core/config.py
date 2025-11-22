@@ -1,6 +1,5 @@
-from pydantic_settings import BaseSettings
 from typing import List
-
+from pydantic_settings import BaseSettings
 
 class Settings(BaseSettings):
     app_name: str = "Sem nome no momento"
