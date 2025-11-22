@@ -1,0 +1,21 @@
+from pydantic import BaseModel, Field
+from typing import Optional
+
+
+class UserBase(BaseModel):
+    phone: str = Field(..., max_length=14, description="Telefone do usuário")
+    gender: str = Field(..., max_length=1, description="Gênero (M/F/O)")
+    race: str = Field(..., max_length=14, description="Raça/Etnia")
+    job: str = Field(..., max_length=50, description="Profissão")
+
+
+class UserCreate(UserBase):
+    zipcode: str = Field(..., max_length=8, min_length=8, description="CEP (apenas números)")
+
+
+class UserResponse(UserBase):
+    id: int
+    address_id: int
+
+    class Config:
+        from_attributes = True
