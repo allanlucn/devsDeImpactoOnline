@@ -1,6 +1,7 @@
 from typing import Optional
 import json
 import os
+import logging
 
 from fastapi import APIRouter, HTTPException, UploadFile, File, Form, Header, Body
 
@@ -66,7 +67,6 @@ async def transcribe_endpoint(file: UploadFile = File(...), metadata: Optional[s
 
     audio_bytes = await file.read()
 
-    # chama transcrição (usa Groq Whisper por padrão)
     trans_res = await transcribe_audio_bytes(audio_bytes, filename=file.filename, timeout=int(os.getenv("GROQ_TRANSCRIBE_TIMEOUT", "60")))
 
     if trans_res.get("error"):
@@ -74,12 +74,10 @@ async def transcribe_endpoint(file: UploadFile = File(...), metadata: Optional[s
 
     transcription = trans_res.get("text", "")
 
-    # passa transcrição para o GPT
     try:
         summary_res = await call_gpt(transcription, meta.get("profile") or {})
         
         if summary_res.get("error"):
-            # Se houver erro no GPT, ainda retorna a transcrição
             return {
                 "status": "partial",
                 "transcription": transcription,
@@ -88,7 +86,6 @@ async def transcribe_endpoint(file: UploadFile = File(...), metadata: Optional[s
             }
     except Exception as e:
         logging.error("Erro ao gerar resumo: %s", str(e))
-        # Retorna pelo menos a transcrição mesmo se o resumo falhar
         return {
             "status": "partial",
             "transcription": transcription,

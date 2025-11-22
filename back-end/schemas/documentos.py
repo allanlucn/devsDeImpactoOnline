@@ -5,7 +5,6 @@ from sqlalchemy.orm import Mapped, mapped_column
 from schemas.base import Base
 
 class DocumentoGov(Base):
-    # Tem que ser o mesmo nome que criamos no SQL do Supabase
     __tablename__ = "documentos_gov"
 
     id: Mapped[int] = mapped_column(primary_key=True)

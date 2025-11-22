@@ -9,7 +9,6 @@ import logging
 logging.basicConfig(level=logging.INFO)
 
 GROQ_API_KEY = os.getenv("GROQ_API_KEY")
-# URLs padrões compatíveis com OpenAI-style endpoints na API Groq
 GROQ_CHAT_URL = os.getenv("GROQ_CHAT_URL", "https://api.groq.com/openai/v1/chat/completions")
 GROQ_TRANSCRIBE_URL = os.getenv("GROQ_TRANSCRIBE_URL", "https://api.groq.com/openai/v1/audio/transcriptions")
 GROQ_API_URL = os.getenv("GROQ_API_URL", "https://api.groq.com/v1/engines/grok")
@@ -25,7 +24,6 @@ def _get_audio_mime_type(filename: str) -> str:
     if mime_type and mime_type.startswith('audio/'):
         return mime_type
     
-    # Fallback baseado na extensão
     ext = filename.lower().split('.')[-1] if '.' in filename else ''
     mime_map = {
         'wav': 'audio/wav',
@@ -51,7 +49,6 @@ async def call_groq_chat(messages: list, model: str = "openai/gpt-oss-120b", max
     if GROQ_API_KEY is None:
         return {"error": "missing_groq_api_key", "text": ""}
 
-    # usa a URL de chat configurada (OpenAI-compatible) por padrão
     chat_url = os.getenv("GROQ_CHAT_URL") or GROQ_CHAT_URL
 
     payload = {"model": model, "messages": messages, "max_tokens": max_tokens}
@@ -64,7 +61,6 @@ async def call_groq_chat(messages: list, model: str = "openai/gpt-oss-120b", max
             logging.info("call_groq_chat status=%s", r.status_code)
             r.raise_for_status()
             data = r.json()
-            # Tenta extrair texto em formato OpenAI-compatible
             text = ""
             try:
                 text = data.get("choices", [])[0].get("message", {}).get("content", "")
@@ -86,7 +82,6 @@ async def call_groq_transcribe(audio_bytes: bytes, filename: str = "audio.wav", 
 
     transcribe_url = os.getenv("GROQ_TRANSCRIBE_URL") or GROQ_TRANSCRIBE_URL
 
-    # Detecta o tipo MIME correto baseado na extensão do arquivo
     mime_type = _get_audio_mime_type(filename)
 
     headers = {"Authorization": f"Bearer {GROQ_API_KEY}"}
