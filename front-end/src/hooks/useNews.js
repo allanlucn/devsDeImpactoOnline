@@ -46,9 +46,34 @@ export const useNews = () => {
     likeCommentApi(newsId, commentId);
   };
 
+  const handleAddComment = (newsId, text) => {
+    const storedProfile = localStorage.getItem('userProfile');
+    const userProfile = storedProfile ? JSON.parse(storedProfile) : {};
+    const userName = userProfile.name || 'Você';
+
+    const newComment = {
+      id: Date.now(), // Temporary ID
+      user: userName,
+      avatar: `https://api.dicebear.com/7.x/avataaars/svg?seed=${userName}`,
+      text,
+      likes: 0,
+      likedByUser: false
+    };
+
+    setNewsItems(prev => prev.map(item => {
+      if (item.id !== newsId) return item;
+      return {
+        ...item,
+        comments: [newComment, ...item.comments]
+      };
+    }));
+    // Call API to add comment would go here
+  };
+
   return {
     newsItems,
     handleLikeNews,
-    handleLikeComment
+    handleLikeComment,
+    handleAddComment
   };
 };

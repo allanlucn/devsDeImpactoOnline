@@ -1,6 +1,7 @@
 import { useState } from "react";
 import { useNavigate } from "react-router-dom";
 import "../styles/onboarding.css";
+import { ThemeToggle } from "../components/ThemeToggle";
 
 const OnboardingPage = () => {
   const navigate = useNavigate();
@@ -12,6 +13,7 @@ const OnboardingPage = () => {
   const [formData, setFormData] = useState({
     occupation: "",
     occupationDetail: "",
+    firstName: "",
     gender: "",
     race: "",
     state: "",
@@ -26,7 +28,7 @@ const OnboardingPage = () => {
     { label: "Trabalhador de app", icon: "📱", subtitle: "Uber/Ifood" },
     { label: "Funcionário Público", icon: "🏛️", subtitle: "Policial, Professor" },
     { label: "Autônomo", icon: "🔧", subtitle: "Pedreiro, Vendedor" },
-    { label: "CLT", icon: "💼", subtitle: "Estoquista, Programador" },
+    { label: "CLT", icon: "💼", subtitle: "Estoquista, Enfermeiro(a)" },
     { label: "Estudante", icon: "🎓", subtitle: "Bolsista, Pesquisador" },
     { label: "MEI", icon: "🏪", subtitle: "Freelancer, Empresário" },
   ];
@@ -56,7 +58,8 @@ const OnboardingPage = () => {
     setLoadingMessage("Salvando suas preferências...");
 
     const userProfile = {
-      job: formData.job,
+      name: formData.firstName,
+      job: formData.occupationDetail || formData.occupation,
       gender: formData.gender,
       race: formData.race,
       state: formData.state,
@@ -73,7 +76,7 @@ const OnboardingPage = () => {
         setTimeout(() => {
           // Here we would send data to backend
           // await api.post('/onboarding', finalData);
-          navigate("/chat");
+          navigate("/news");
         }, 1000);
       }, 1500);
     }, 1500);
@@ -136,6 +139,17 @@ const OnboardingPage = () => {
       </div>
 
       <div className="form-grid-2col">
+        <div className="form-group full-width">
+          <label>Como você quer ser chamado?</label>
+          <input
+            type="text"
+            name="firstName"
+            placeholder="Seu primeiro nome"
+            value={formData.firstName}
+            onChange={handleInputChange}
+          />
+        </div>
+
         <div className="form-group">
           <label>Gênero</label>
           <select
@@ -173,6 +187,7 @@ const OnboardingPage = () => {
           name="state"
           value={formData.state}
           onChange={handleInputChange}
+          required
         >
           <option value="">Selecione um estado</option>
           <option value="AC">Acre</option>
@@ -258,6 +273,7 @@ const OnboardingPage = () => {
           placeholder="(11) 99999-9999"
           value={formData.phone}
           onChange={handleInputChange}
+          required
         />
       </div>
     </div>
@@ -288,6 +304,7 @@ const OnboardingPage = () => {
             >
               ←
             </button>
+            <ThemeToggle />
             <div className="step-indicator">
               Passo {step} de {totalSteps}
             </div>
@@ -308,14 +325,21 @@ const OnboardingPage = () => {
 
         <div className="onboarding-actions">
           {step < 3 ? (
-            <button className="btn-primary" onClick={nextStep}>
+            <button 
+              className="btn-primary" 
+              onClick={nextStep}
+              disabled={
+                (step === 1 && !formData.occupation) ||
+                (step === 2 && !formData.state)
+              }
+            >
               Continuar &gt;
             </button>
           ) : (
             <button
               className="btn-primary"
               onClick={handleSubmit}
-              disabled={!formData.phone || formData.phone.length < 8}
+              disabled={!formData.state || !formData.phone || formData.phone.length < 8}
             >
               Ativar Radar agora
             </button>

@@ -1,0 +1,12 @@
+/* ChatPage.css - Now serving as NewsPage styles */
+
+.news-page-wrapper {
+  min-height: 100vh;
+}
+
+/* Ensure the main content area is centered and constrained on larger screens if needed, 
+   though the design looks mobile-first/responsive */
+main {
+  max-width: 600px; /* Or whatever max-width is appropriate for the news feed */
+  margin: 0 auto;
+}

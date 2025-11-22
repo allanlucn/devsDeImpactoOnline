@@ -5,6 +5,7 @@ import { MessageSquare, Scale, DollarSign, Send, Sparkles } from "lucide-react";
 import heroPhone from "../assets/hero-phone.png";
 import logo from "../assets/logo.png";
 import "../styles/LandingPage.css";
+import { ThemeToggle } from "../components/ThemeToggle";
 
 const LandingPage = () => {
   const navigate = useNavigate();
@@ -19,7 +20,10 @@ const LandingPage = () => {
               <img src={logo} alt="RadarCidadao" className="logo-image" />
               <span className="logo-text">RadarCidadao</span>
             </div>
-            <Button onClick={() => navigate("/onboarding")}>Começar</Button>
+            <div className="flex items-center gap-4">
+              <ThemeToggle />
+              <Button onClick={() => navigate("/onboarding")}>Começar</Button>
+            </div>
           </div>
         </div>
       </header>
@@ -33,11 +37,11 @@ const LandingPage = () => {
                 O Congresso fala difícil. A gente traduz.
               </h1>
               <p className="hero-description">
-                Seu assistente legislativo pessoal. Pergunte sobre leis, monitore seus direitos e entenda o impacto no seu bolso com a velocidade da Inteligência Artificial.
+                Seu assistente legislativo pessoal. Pergunte sobre leis, monitore seus direitos e participe das decisões que afetam você.
               </p>
               <div className="hero-cta">
                 <Button size="lg" className="cta-button" onClick={() => navigate("/onboarding")}>
-                  Começar Conversa Agora
+                  Participe
                 </Button>
                 <p className="hero-note">
                   100% Gratuito - Sem cadastro complexo.
@@ -113,10 +117,10 @@ const LandingPage = () => {
         <div className="container">
           <div className="section-header">
             <h2 className="section-title">
-              Não pesquise. Pergunte.
+              Pergunte.
             </h2>
             <p className="section-description">
-              Nosso Chatbot lê todas as leis em tempo real. É só digitar.
+              Nossa IA lê todas as atualizações em tempo real e responde às suas perguntas.
             </p>
           </div>
           <Card className="chat-card">
@@ -206,6 +210,55 @@ const LandingPage = () => {
               <div className="stat-value">100%</div>
               <div className="stat-label">Baseado em Dados Oficiais</div>
             </div>
+          </div>
+        </div>
+      </section>
+
+      {/* Community Section */}
+      <section className="community-section py-20 bg-white dark:bg-background">
+        <div className="container">
+          <div className="section-header mb-12">
+            <h2 className="section-title text-3xl font-bold text-center mb-4 text-foreground">
+              Sua voz importa. Participe do debate.
+            </h2>
+            <p className="section-description text-center text-muted-foreground max-w-2xl mx-auto">
+              Não seja apenas um espectador. Comente, curta e dê upvote nas opiniões que representam você. Influencie o debate sobre as leis que afetam sua vida.
+            </p>
+          </div>
+          <div className="grid md:grid-cols-3 gap-8">
+            <Card className="p-6 hover:shadow-lg transition-shadow bg-card border-border">
+              <CardContent className="flex flex-col items-center text-center p-0">
+                <div className="mb-4 p-3 bg-primary/10 rounded-full text-primary">
+                  <MessageSquare className="w-8 h-8" />
+                </div>
+                <h3 className="text-xl font-bold mb-2 text-card-foreground">Comente</h3>
+                <p className="text-muted-foreground">
+                  Compartilhe sua perspectiva sobre projetos de lei e veja o que outros cidadãos pensam.
+                </p>
+              </CardContent>
+            </Card>
+            <Card className="p-6 hover:shadow-lg transition-shadow bg-card border-border">
+              <CardContent className="flex flex-col items-center text-center p-0">
+                <div className="mb-4 p-3 bg-primary/10 rounded-full text-primary">
+                  <Sparkles className="w-8 h-8" />
+                </div>
+                <h3 className="text-xl font-bold mb-2 text-card-foreground">Engaje</h3>
+                <p className="text-muted-foreground">
+                  Dê likes e interaja com a comunidade. Construa uma reputação de cidadão ativo.
+                </p>
+              </CardContent>
+            </Card>
+            <Card className="p-6 hover:shadow-lg transition-shadow bg-card border-border">
+              <CardContent className="flex flex-col items-center text-center p-0">
+                <div className="mb-4 p-3 bg-primary/10 rounded-full text-primary">
+                  <Scale className="w-8 h-8" />
+                </div>
+                <h3 className="text-xl font-bold mb-2 text-card-foreground">Impacte</h3>
+                <p className="text-muted-foreground">
+                  Seu engajamento ajuda a destacar os temas mais importantes para a sociedade.
+                </p>
+              </CardContent>
+            </Card>
           </div>
         </div>
       </section>
