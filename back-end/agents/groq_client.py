@@ -1,7 +1,7 @@
 import os
 import asyncio
 import mimetypes
-from typing import Any, Dict
+from typing import Any, Dict, Optional, List
 
 import httpx
 import logging
@@ -38,12 +38,49 @@ def _get_audio_mime_type(filename: str) -> str:
     }
     return mime_map.get(ext, 'audio/wav')
 
+BRAZIL_GOV_DOMAINS = [
+    "camara.leg.br",
+    "senado.leg.br",
+    "joaopessoa.pb.leg.br",
+    "al.pb.leg.br"
+]
 
-async def call_groq_chat(messages: list, model: str = "openai/gpt-oss-120b", max_tokens: int = 512, timeout: int = 30) -> Dict[str, Any]:
+def _get_web_search_tools() -> List[Dict[str, Any]]:
+    """Retorna a configuração de ferramentas para busca na web."""
+    return [
+        {
+            "type": "web_search"
+        }
+    ]
+
+
+def _get_search_settings(country: str = "brazil", include_domains: Optional[List[str]] = None) -> Dict[str, Any]:
+    """Configura as opções de busca na web.
+    
+    Args:
+        country: País para priorizar nas buscas (padrão: "brazil")
+        include_domains: Lista de domínios para incluir nas buscas
+    """
+    settings = {
+        "country": country,
+        "include_images": False  # Não incluir imagens por padrão
+    }
+    
+    if include_domains:
+        settings["include_domains"] = include_domains
+    
+    return settings
+
+async def call_groq_chat(messages: list, model: str = "openai/gpt-oss-120b", max_tokens: int = 512, timeout: int = 30, enable_web_search: bool = True, search_country: str = "brazil", search_domains: Optional[List[str]] = None) -> Dict[str, Any]:
     """Chama o endpoint de chat/completions da Groq usando formato compatível com OpenAI.
 
     - `messages`: lista de objetos {role: system|user|assistant, content: str}
     - `model`: nome do modelo hospedado na Groq (ex: "llama-3.3-70b", "gpt-oss-120b").
+    - `max_tokens`: máximo de tokens na resposta
+    - `timeout`: timeout da requisição
+    - `enable_web_search`: habilita busca na web (padrão: True)
+    - `search_country`: país para priorizar nas buscas (padrão: "brazil")
+    - `search_domains`: lista de domínios para incluir nas buscas
     Retorna o JSON cru e um campo `text` com o conteúdo principal quando possível.
     """
     if GROQ_API_KEY is None:
@@ -52,6 +89,16 @@ async def call_groq_chat(messages: list, model: str = "openai/gpt-oss-120b", max
     chat_url = os.getenv("GROQ_CHAT_URL") or GROQ_CHAT_URL
 
     payload = {"model": model, "messages": messages, "max_tokens": max_tokens}
+
+    # Adiciona busca na web se habilitada
+    if enable_web_search:
+        payload["tools"] = _get_web_search_tools()
+        payload["search_settings"] = _get_search_settings(
+            country=search_country,
+            include_domains=search_domains or BRAZIL_GOV_DOMAINS
+        )
+        logging.info("Web search enabled for country=%s, domains=%s", search_country, search_domains or BRAZIL_GOV_DOMAINS)
+
     headers = {"Authorization": f"Bearer {GROQ_API_KEY}", "Content-Type": "application/json"}
 
     async with httpx.AsyncClient(timeout=timeout) as client:
