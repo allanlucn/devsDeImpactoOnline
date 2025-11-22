@@ -1,6 +1,6 @@
 import React, { useEffect, useState } from 'react';
 import { useNavigate, useLocation } from 'react-router-dom';
-import { Plus, Newspaper, MessageSquare, History, X } from 'lucide-react';
+import { Plus, Newspaper, MessageSquare, History, X, Trash2 } from 'lucide-react';
 
 const Sidebar = ({ isOpen, onClose }) => {
   const navigate = useNavigate();
@@ -20,6 +20,26 @@ const Sidebar = ({ isOpen, onClose }) => {
   };
 
   const isActive = (path) => location.pathname === path;
+  const [chatHistory, setChatHistory] = useState([]);
+
+  useEffect(() => {
+    const loadHistory = () => {
+      const history = JSON.parse(localStorage.getItem('chatHistory') || '[]');
+      setChatHistory(history);
+    };
+
+    loadHistory();
+    window.addEventListener('chatHistoryUpdated', loadHistory);
+    return () => window.removeEventListener('chatHistoryUpdated', loadHistory);
+  }, []);
+
+  const handleDeleteChat = (e, chatId) => {
+    e.stopPropagation();
+    const updatedHistory = chatHistory.filter(chat => chat.id !== chatId);
+    localStorage.setItem('chatHistory', JSON.stringify(updatedHistory));
+    setChatHistory(updatedHistory);
+    window.dispatchEvent(new Event('chatHistoryUpdated'));
+  };
 
   return (
     <>
@@ -45,11 +65,11 @@ const Sidebar = ({ isOpen, onClose }) => {
           </button>
         </div>
 
-        <div className="p-4 flex-1 flex flex-col gap-6">
+        <div className="p-4 flex-1 flex flex-col gap-6 overflow-y-auto">
           {/* New Chat Button */}
           <button 
-            onClick={() => handleNavigation('/news')}
-            className="w-full flex items-center justify-center gap-2 bg-primary text-primary-foreground hover:bg-primary/90 py-3 rounded-full font-medium transition-colors shadow-sm"
+            onClick={() => handleNavigation('/chat')}
+            className="w-full flex items-center justify-center gap-2 bg-primary text-primary-foreground hover:bg-primary/90 py-3 rounded-full font-medium transition-colors shadow-sm flex-shrink-0"
           >
             <Plus className="w-5 h-5" />
             <span>Novo Chat</span>
@@ -75,12 +95,41 @@ const Sidebar = ({ isOpen, onClose }) => {
               <MessageSquare className="w-5 h-5" />
               <span>Fórum</span>
             </button>
-            <button 
-              className="flex items-center gap-3 px-4 py-3 text-muted-foreground hover:bg-accent/50 rounded-xl transition-colors text-left font-medium"
-            >
-              <History className="w-5 h-5" />
-              <span>Histórico</span>
-            </button>
+            
+            {/* History Section */}
+            <div className="mt-2">
+              <div className="flex items-center gap-3 px-4 py-2 text-muted-foreground font-medium">
+                <History className="w-5 h-5" />
+                <span>Histórico</span>
+              </div>
+              <div className="flex flex-col gap-1 mt-1 pl-4">
+                {chatHistory.map((chat) => (
+                  <div key={chat.id} className="group flex items-center justify-between hover:bg-accent/30 rounded-lg transition-colors pr-2">
+                    <button
+                      onClick={() => {
+                        navigate('/chat', { state: { chatHistoryItem: chat } });
+                        onClose();
+                      }}
+                      className="flex-1 text-sm text-muted-foreground hover:text-foreground px-4 py-2 text-left truncate"
+                    >
+                      {chat.title}
+                    </button>
+                    <button
+                      onClick={(e) => handleDeleteChat(e, chat.id)}
+                      className="p-1 text-muted-foreground hover:text-red-500 opacity-0 group-hover:opacity-100 transition-opacity"
+                      title="Excluir conversa"
+                    >
+                      <Trash2 className="w-4 h-4" />
+                    </button>
+                  </div>
+                ))}
+                {chatHistory.length === 0 && (
+                  <p className="text-xs text-muted-foreground px-4 py-2 italic">
+                    Nenhum histórico recente
+                  </p>
+                )}
+              </div>
+            </div>
           </nav>
         </div>
 

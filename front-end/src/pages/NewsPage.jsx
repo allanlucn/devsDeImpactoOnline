@@ -1,4 +1,5 @@
 import React, { useState } from 'react';
+import { useNavigate } from 'react-router-dom';
 import '../styles/NewsPage.css';
 import { useNews } from '../hooks/useNews';
 import NewsHeader from '../components/NewsHeader';
@@ -7,15 +8,14 @@ import NewsDetail from '../components/NewsDetail';
 import Sidebar from '../components/Sidebar';
 
 const NewsPage = () => {
+  const navigate = useNavigate();
   const { newsItems, handleAddComment, handleLikeComment } = useNews();
   const [selectedNews, setSelectedNews] = useState(null);
   const [isSidebarOpen, setIsSidebarOpen] = useState(false);
 
   // Handler for the "Perguntar p/ IA" button inside the detail view
   const handleAskAI = (news) => {
-    console.log('Initiating AI chat for news:', news.title);
-    // Example future implementation:
-    // navigate('/chat-interface', { state: { context: news } });
+    navigate('/chat', { state: { context: news } });
   };
 
   // Derive the active news item from the main state to ensure updates (likes, comments) are reflected

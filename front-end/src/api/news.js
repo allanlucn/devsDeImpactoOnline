@@ -1,7 +1,5 @@
-// Placeholder for FastAPI integration
-
+// MOCK DATA - Replace with actual FastAPI integration when backend endpoint is ready
 export const fetchNewsApi = async () => {
-  // TODO: Replace with actual API call
   return [
     {
       id: 1,
@@ -74,10 +72,12 @@ A equipe econômica projeta que, com as novas regras, será possível alcançar 
 
 };
 
+// MOCK DATA - Implement when backend endpoint is ready
 export const likeNewsApi = async (id) => {
-  // TODO: Replace with actual API call
+  return { success: true };
 };
 
+// MOCK DATA - Implement when backend endpoint is ready
 export const likeCommentApi = async (newsId, commentId) => {
-  // TODO: Replace with actual API call
+  return { success: true };
 };

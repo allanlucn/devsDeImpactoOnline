@@ -4,7 +4,7 @@ const API_BASE_URL =
 
 export const sendMessageToApi = async (message, profile = {}) => {
   try {
-    const response = await fetch(`${API_BASE_URL}/api/v1/chat`, {
+    const response = await fetch(`${API_BASE_URL}/api/v1/chat/`, {
       method: "POST",
       headers: {
         "Content-Type": "application/json",

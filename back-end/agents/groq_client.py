@@ -46,6 +46,7 @@ async def call_groq_chat(messages: list, model: str = "openai/gpt-oss-120b", max
     - `model`: nome do modelo hospedado na Groq (ex: "llama-3.3-70b", "gpt-oss-120b").
     Retorna o JSON cru e um campo `text` com o conteúdo principal quando possível.
     """
+
     if GROQ_API_KEY is None:
         return {"error": "missing_groq_api_key", "text": ""}
 

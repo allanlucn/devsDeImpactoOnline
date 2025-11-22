@@ -1,21 +1,25 @@
 from fastapi import FastAPI
 from fastapi.middleware.cors import CORSMiddleware
 from dotenv import load_dotenv
+import logging
 
 load_dotenv()
 
 from core.config import settings
 
+logging.basicConfig(level=logging.INFO)
+logger = logging.getLogger(__name__)
+
 try:
     from api.v1 import api_router
 except ImportError:
-    print("Aviso: api_router não encontrado em api.v1. Verifique os imports.")
+    logger.warning("api_router não encontrado em api.v1. Verifique os imports.")
     api_router = None
 
 try:
     from agents.routes import router as agents_router
 except ImportError:
-    print("Aviso: agents_router não encontrado. Verifique se o arquivo agents/routes.py existe.")
+    logger.warning("agents_router não encontrado. Verifique se o arquivo agents/routes.py existe.")
     agents_router = None
 
 def create_app() -> FastAPI:
