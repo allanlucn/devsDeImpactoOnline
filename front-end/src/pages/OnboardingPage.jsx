@@ -11,10 +11,9 @@ const OnboardingPage = () => {
   // Form Data State
   const [formData, setFormData] = useState({
     occupation: "",
+    occupationDetail: "",
     gender: "",
     race: "",
-    isLgbtq: false,
-    isSingleParent: false,
     state: "",
     alertUrgent: false,
     alertPolls: false,
@@ -24,12 +23,12 @@ const OnboardingPage = () => {
   const totalSteps = 3;
 
   const occupations = [
-    { label: "Entregador de app", icon: "🛵", subtitle: "Moto/Bike" },
-    { label: "Motorista de app", icon: "🚗", subtitle: "Uber, 99" },
-    { label: "Construção civil", icon: "👷", subtitle: "Pedreiro, Servente" },
-    { label: "Comércio", icon: "🛍️", subtitle: "Vendedor, Caixa" },
-    { label: "Saúde", icon: "⚕️", subtitle: "Enfermagem, Cuidador" },
-    { label: "Estudante", icon: "🎓", subtitle: "Bolsista, Uni" },
+    { label: "Trabalhador de app", icon: "📱", subtitle: "Uber/Ifood" },
+    { label: "Funcionário Público", icon: "🏛️", subtitle: "Policial, Professor" },
+    { label: "Autônomo", icon: "🔧", subtitle: "Pedreiro, Vendedor" },
+    { label: "CLT", icon: "💼", subtitle: "Estoquista, Programador" },
+    { label: "Estudante", icon: "🎓", subtitle: "Bolsista, Pesquisador" },
+    { label: "MEI", icon: "🏪", subtitle: "Freelancer, Empresário" },
   ];
 
   const handleInputChange = (e) => {
@@ -109,6 +108,21 @@ const OnboardingPage = () => {
           </button>
         ))}
       </div>
+
+      {formData.occupation && (
+        <div className="occupation-detail-wrapper">
+          <div className="form-group">
+            <label>Especifique sua função ou atividade</label>
+            <input
+              type="text"
+              name="occupationDetail"
+              placeholder={`Ex: ${occupations.find(o => o.label === formData.occupation)?.subtitle?.split(", ")[0] || "Sua função específica"}`}
+              value={formData.occupationDetail}
+              onChange={handleInputChange}
+            />
+          </div>
+        </div>
+      )}
     </div>
   );
 
@@ -153,38 +167,42 @@ const OnboardingPage = () => {
         </div>
       </div>
 
-      <div className="checkbox-group">
-        <label className="checkbox-label">
-          <input
-            type="checkbox"
-            name="isLgbtq"
-            checked={formData.isLgbtq}
-            onChange={handleInputChange}
-          />
-          Sou LGBTQIA+
-        </label>
-        <label className="checkbox-label">
-          <input
-            type="checkbox"
-            name="isSingleParent"
-            checked={formData.isSingleParent}
-            onChange={handleInputChange}
-          />
-          Sou Pai/Mãe solo
-        </label>
-      </div>
-
       <div className="form-group">
         <label>Onde você mora? (Estado/UF)</label>
-        <input
-          type="text"
+        <select
           name="state"
-          placeholder="Ex: SP, RJ, MG..."
           value={formData.state}
           onChange={handleInputChange}
-          maxLength={2}
-          className="input-uppercase"
-        />
+        >
+          <option value="">Selecione um estado</option>
+          <option value="AC">Acre</option>
+          <option value="AL">Alagoas</option>
+          <option value="AP">Amapá</option>
+          <option value="AM">Amazonas</option>
+          <option value="BA">Bahia</option>
+          <option value="CE">Ceará</option>
+          <option value="DF">Distrito Federal</option>
+          <option value="ES">Espírito Santo</option>
+          <option value="GO">Goiás</option>
+          <option value="MA">Maranhão</option>
+          <option value="MT">Mato Grosso</option>
+          <option value="MS">Mato Grosso do Sul</option>
+          <option value="MG">Minas Gerais</option>
+          <option value="PA">Pará</option>
+          <option value="PB">Paraíba</option>
+          <option value="PR">Paraná</option>
+          <option value="PE">Pernambuco</option>
+          <option value="PI">Piauí</option>
+          <option value="RJ">Rio de Janeiro</option>
+          <option value="RN">Rio Grande do Norte</option>
+          <option value="RS">Rio Grande do Sul</option>
+          <option value="RO">Rondônia</option>
+          <option value="RR">Roraima</option>
+          <option value="SC">Santa Catarina</option>
+          <option value="SP">São Paulo</option>
+          <option value="SE">Sergipe</option>
+          <option value="TO">Tocantins</option>
+        </select>
       </div>
     </div>
   );

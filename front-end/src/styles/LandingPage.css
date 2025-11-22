@@ -281,19 +281,27 @@
 .message {
   padding: 1rem;
   border-radius: 0.5rem;
+  max-width: 80%;
 }
 
 .message p {
   font-size: 0.875rem;
   color: hsl(var(--foreground));
+  margin: 0;
 }
 
 .message-user {
   background-color: hsl(var(--muted));
+  align-self: flex-end;
+  margin-left: auto;
+  border-bottom-right-radius: 0.25rem;
 }
 
 .message-bot {
   background-color: hsl(var(--primary) / 0.1);
+  align-self: flex-start;
+  margin-right: auto;
+  border-bottom-left-radius: 0.25rem;
 }
 
 .chat-input-wrapper {
