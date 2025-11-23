@@ -61,3 +61,13 @@ class UserService:
         user = UserService.get_user_by_id(db, user_id)
         db.delete(user)
         db.commit()
+
+    @staticmethod
+    def auth(db: Session, user_phone: str) -> User:
+        user = db.query(User).filter(User.phone == user_phone).first()
+        if user is None:
+            raise HTTPException(
+                status_code=status.HTTP_404_NOT_FOUND,
+                detail="Usuário não encontrado com este telefone"
+            )
+        return user 

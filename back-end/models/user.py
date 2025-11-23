@@ -7,6 +7,7 @@ class UserBase(BaseModel):
     gender: str = Field(..., max_length=1, description="Gênero (M/F/O)")
     race: str = Field(..., max_length=14, description="Raça/Etnia")
     job: str = Field(..., max_length=50, description="Profissão")
+    job_label: str = Field(..., max_length=50, description="Classificação do trabalho")
 
 
 class UserCreate(UserBase):

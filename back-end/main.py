@@ -5,18 +5,8 @@ from dotenv import load_dotenv
 load_dotenv()
 
 from core.config import settings
-
-try:
-    from api.v1 import api_router
-except ImportError:
-    print("Aviso: api_router não encontrado em api.v1. Verifique os imports.")
-    api_router = None
-
-try:
-    from agents.routes import router as agents_router
-except ImportError:
-    print("Aviso: agents_router não encontrado. Verifique se o arquivo agents/routes.py existe.")
-    agents_router = None
+from api.v1 import api_router
+from agents.routes import router as agents_router
 
 def create_app() -> FastAPI:
     application = FastAPI(
