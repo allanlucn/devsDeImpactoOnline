@@ -28,3 +28,13 @@ def search_projetos_lei(
     db: Session = Depends(get_db)
 ):
     return ProjetoLeiService.search_projetos_lei(db, q, skip, limit)
+
+
+@router.get("/feed/{user_id}", response_model=List[ProjetoLeiResponse])
+def get_personalized_feed(
+    user_id: int,
+    skip: int = Query(0, ge=0, description="Número de registros a pular"),
+    limit: int = Query(100, ge=1, le=500, description="Número máximo de registros a retornar"),
+    db: Session = Depends(get_db)
+):
+    return ProjetoLeiService.get_personalized_feed(db, user_id, skip, limit)
