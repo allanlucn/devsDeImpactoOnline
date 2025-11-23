@@ -3,12 +3,14 @@ import { useNavigate } from "react-router-dom";
 import "../styles/onboarding.css";
 import { ThemeToggle } from "../components/ThemeToggle";
 import { createUser } from "../api/users";
+import LoginModal from "../components/LoginModal";
 
 const OnboardingPage = () => {
   const navigate = useNavigate();
   const [step, setStep] = useState(1);
   const [isSubmitting, setIsSubmitting] = useState(false);
   const [loadingMessage, setLoadingMessage] = useState("");
+  const [showLoginModal, setShowLoginModal] = useState(false);
 
   // Form Data State
   const [formData, setFormData] = useState({
@@ -360,7 +362,16 @@ const OnboardingPage = () => {
             >
               ←
             </button>
-            <ThemeToggle />
+            <div style={{ display: "flex", gap: "0.5rem", alignItems: "center" }}>
+              <button 
+                className="btn-login" 
+                onClick={() => setShowLoginModal(true)}
+                title="Já tem cadastro? Faça login"
+              >
+                Entrar
+              </button>
+              <ThemeToggle />
+            </div>
             <div className="step-indicator">
               Passo {step} de {totalSteps}
             </div>
@@ -407,6 +418,11 @@ const OnboardingPage = () => {
           )}
         </div>
       </div>
+
+      <LoginModal 
+        isOpen={showLoginModal} 
+        onClose={() => setShowLoginModal(false)} 
+      />
     </div>
   );
 };

@@ -1,3 +1,4 @@
+import { useState } from "react";
 import { useNavigate } from "react-router-dom";
 import { Button } from "../components/ui/button";
 import { Card, CardContent } from "../components/ui/card";
@@ -6,9 +7,11 @@ import heroPhone from "../assets/hero-phone.png";
 import logo from "../assets/logo.png";
 import "../styles/LandingPage.css";
 import { ThemeToggle } from "../components/ThemeToggle";
+import LoginModal from "../components/LoginModal";
 
 const LandingPage = () => {
   const navigate = useNavigate();
+  const [showLoginModal, setShowLoginModal] = useState(false);
 
   return (
     <div className="landing-page">
@@ -22,6 +25,7 @@ const LandingPage = () => {
             </div>
             <div className="flex items-center gap-4">
               <ThemeToggle />
+              <Button variant="outline" onClick={() => setShowLoginModal(true)}>Entrar</Button>
               <Button onClick={() => navigate("/onboarding")}>Começar</Button>
             </div>
           </div>
@@ -276,6 +280,11 @@ const LandingPage = () => {
           </div>
         </div>
       </section>
+
+      <LoginModal 
+        isOpen={showLoginModal} 
+        onClose={() => setShowLoginModal(false)} 
+      />
     </div>
   );
 };
