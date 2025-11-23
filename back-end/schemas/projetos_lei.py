@@ -1,8 +1,12 @@
+from typing import TYPE_CHECKING, List
 from datetime import date, datetime
 from sqlalchemy import String, Integer, Text, Date, TIMESTAMP, JSON, Index
-from sqlalchemy.orm import Mapped, mapped_column
+from sqlalchemy.orm import Mapped, mapped_column, relationship
 from schemas.base import Base
 
+if TYPE_CHECKING:
+    from schemas.comment import Comment
+    from schemas.news_reaction import NewsReaction
 
 class ProjetoLei(Base):
     __tablename__ = "projetos_lei"
@@ -21,6 +25,9 @@ class ProjetoLei(Base):
     data_apresentacao: Mapped[str] = mapped_column(String, nullable=True, index=True)
     data_processamento: Mapped[str] = mapped_column(String, nullable=True)
     titulo: Mapped[str] = mapped_column(Text, nullable=True)
+    
+    comments: Mapped[List["Comment"]] = relationship("Comment", back_populates="news")
+    reactions: Mapped[List["NewsReaction"]] = relationship("NewsReaction", back_populates="news")
 
     __table_args__ = (
         Index('ix_projetos_lei_tipo_ano', 'tipo', 'ano'),
