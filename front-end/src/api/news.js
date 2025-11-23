@@ -1,83 +1,83 @@
-// MOCK DATA - Replace with actual FastAPI integration when backend endpoint is ready
-export const fetchNewsApi = async () => {
-  return [
-    {
-      id: 1,
-      title: 'Governo Anuncia Novas Diretrizes para Política Fiscal',
-      summary: 'O governo federal detalhou hoje as novas diretrizes para a política fiscal do país.',
-      content: `O governo federal detalhou hoje as novas diretrizes para a política fiscal do país, visando maior controle dos gastos públicos e a estabilização da dívida. As medidas incluem a revisão de incentivos fiscais e um novo arcabouço para o controle das despesas, que substituirá o teto de gastos.
+const API_BASE_URL = import.meta.env.VITE_API_BASE_URL || 'http://localhost:8000';
 
-A equipe econômica projeta que, com as novas regras, será possível alcançar um superávit primário já no próximo ano, contribuindo para a melhoria da confiança dos investidores e a redução dos juros a longo prazo. O projeto de lei será encaminhado ao Congresso Nacional na próxima semana, onde se espera um debate intenso entre os parlamentares sobre os impactos e a eficácia das propostas.`,
-      source: 'Fonte da Notícia',
-      date: '24 de Julho, 2024',
-      timestamp: 'Há 2 horas',
-      category: 'Trabalho', // Using 'Trabalho' to match the blue color in the image for now, or could be 'Economia'
-      likes: 120,
-      likedByUser: false,
-      comments: [
-        { 
-          id: 101, 
-          user: 'Carlos S.', 
-          avatar: 'https://api.dicebear.com/7.x/avataaars/svg?seed=Carlos',
-          text: 'Medidas importantes, mas a execução será o grande desafio. Espero que o Congresso colabore.', 
-          likes: 10, 
-          likedByUser: false 
-        },
-        { 
-          id: 102, 
-          user: 'Ana Lúcia', 
-          avatar: 'https://api.dicebear.com/7.x/avataaars/svg?seed=Ana',
-          text: 'Estou cética quanto ao superávit já no próximo ano. Parece uma meta otimista demais.', 
-          likes: 5, 
-          likedByUser: false 
-        }
-      ]
-    },
-    {
-      id: 2,
-      title: 'Câmara aprova projeto que afrouxa regras para uso de agrotóxicos no país',
-      summary: 'Projeto polêmico foi aprovado na noite de ontem.',
-      content: 'A Câmara dos Deputados aprovou o projeto de lei que altera as regras para fiscalização e uso de agrotóxicos. A medida gera polêmica entre ambientalistas e o setor do agronegócio...',
-      source: 'Jornal Nacional',
-      date: '23 de Julho, 2024',
-      timestamp: 'Há 12 horas',
-      category: 'Meio Ambiente',
-      likes: 85,
-      likedByUser: false,
-      comments: [
-        { 
-          id: 103, 
-          user: 'Roberto M.', 
-          avatar: 'https://api.dicebear.com/7.x/avataaars/svg?seed=Roberto',
-          text: 'Preocupante para a saúde pública.', 
-          likes: 20, 
-          likedByUser: false 
-        }
-      ]
-    },
-    {
-      id: 3,
-      title: 'Comissão de Saúde debate a implementação do piso salarial da enfermagem',
-      summary: 'Debate foca em fontes de custeio para o piso.',
-      content: 'A Comissão de Saúde realizou hoje uma audiência pública para discutir as fontes de financiamento para o piso salarial da enfermagem...',
-      source: 'Agência Câmara',
-      date: '23 de Julho, 2024',
-      timestamp: 'Ontem',
-      category: 'Saúde',
-      likes: 240,
-      likedByUser: false,
-      comments: []
-    }
-  ];
-
+const formatDate = (dateString) => {
+  if (!dateString) return '';
+  const date = new Date(dateString);
+  return date.toLocaleDateString('pt-BR', { day: '2-digit', month: 'long', year: 'numeric' });
 };
 
-// MOCK DATA - Implement when backend endpoint is ready
+const getTimeAgo = (dateString) => {
+  if (!dateString) return '';
+  const date = new Date(dateString);
+  const now = new Date();
+  const diffMs = now - date;
+  const diffHours = Math.floor(diffMs / (1000 * 60 * 60));
+  const diffDays = Math.floor(diffHours / 24);
+  
+  if (diffHours < 1) return 'Agora';
+  if (diffHours < 24) return `Há ${diffHours} hora${diffHours > 1 ? 's' : ''}`;
+  if (diffDays === 1) return 'Ontem';
+  if (diffDays < 7) return `Há ${diffDays} dias`;
+  return formatDate(dateString);
+};
+
+const getCategoryFromTags = (tags) => {
+  if (!tags) return 'Geral';
+  
+  const tagList = Array.isArray(tags) ? tags : (tags.tags || []);
+  if (tagList.length === 0) return 'Geral';
+  
+  const categoryMap = {
+    'economia': 'Economia',
+    'saúde': 'Saúde',
+    'educação': 'Educação',
+    'trabalho': 'Trabalho',
+    'meio ambiente': 'Meio Ambiente',
+    'segurança': 'Segurança',
+    'transporte': 'Transporte'
+  };
+  
+  const firstTag = tagList[0].toLowerCase();
+  return categoryMap[firstTag] || tagList[0];
+};
+
+export const fetchNewsApi = async (userId) => {
+  try {
+    const response = await fetch(`${API_BASE_URL}/api/v1/news/feed/${userId}`);
+    
+    if (!response.ok) {
+      throw new Error(`Erro ao buscar notícias: ${response.status}`);
+    }
+    
+    const data = await response.json();
+    
+    return data.map(item => ({
+      id: item.id,
+      title: item.titulo || `${item.tipo} ${item.numero}/${item.ano}`,
+      summary: item.resumo_ia || item.ementa?.substring(0, 150) + '...' || '',
+      content: item.ementa || '',
+      source: 'Câmara dos Deputados',
+      date: formatDate(item.data_apresentacao),
+      timestamp: getTimeAgo(item.data_apresentacao),
+      category: getCategoryFromTags(item.tags_ia),
+      likes: 0,
+      likedByUser: false,
+      comments: [],
+      link_inteiro_teor: item.link_inteiro_teor,
+      tipo: item.tipo,
+      numero: item.numero,
+      ano: item.ano
+    }));
+  } catch (error) {
+    console.error('Erro ao buscar notícias:', error);
+    return [];
+  }
+};
+
 export const likeNewsApi = async (id) => {
   return { success: true };
 };
 
-// MOCK DATA - Implement when backend endpoint is ready
 export const likeCommentApi = async (newsId, commentId) => {
   return { success: true };
 };

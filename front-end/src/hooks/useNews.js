@@ -5,7 +5,13 @@ export const useNews = () => {
   const [newsItems, setNewsItems] = useState([]);
 
   useEffect(() => {
-    fetchNewsApi().then(data => setNewsItems(data));
+    const storedProfile = localStorage.getItem('userProfile');
+    if (storedProfile) {
+      const userProfile = JSON.parse(storedProfile);
+      if (userProfile.id) {
+        fetchNewsApi(userProfile.id).then(data => setNewsItems(data));
+      }
+    }
   }, []);
 
   const handleLikeNews = (id) => {
