@@ -191,7 +191,7 @@ const OnboardingPage = () => {
       {formData.occupation && (
         <div className="occupation-detail-wrapper">
           <div className="form-group">
-            <label>Especifique sua função ou atividade</label>
+            <label>Especifique sua função ou atividade <span className="text-muted-foreground">(opcional)</span></label>
             <input
               type="text"
               name="occupationDetail"

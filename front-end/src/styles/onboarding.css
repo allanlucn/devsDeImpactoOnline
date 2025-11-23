@@ -426,6 +426,121 @@
   
   .btn-primary {
     width: 100%;
+    min-width: auto;
+  }
+}
+
+/* Very Small Mobile Screens (375px and below) */
+@media (max-width: 375px) {
+  .onboarding-page {
+    padding: 16px 12px;
+  }
+
+  .onboarding-container {
+    gap: 20px;
+  }
+
+  /* Header fixes - critical for preventing overlap */
+  .header-top {
+    gap: 8px;
+    margin-bottom: 4px;
+  }
+
+  .btn-back-icon {
+    font-size: 1.8rem;
+    padding: 4px;
+  }
+
+  .btn-login {
+    padding: 6px 12px;
+    font-size: 0.8rem;
+  }
+
+  .step-indicator {
+    font-size: 0.75rem;
+    bottom: 20px;
+  }
+
+  /* Step header */
+  .step-header {
+    margin-bottom: 24px;
+  }
+
+  .step-header h2 {
+    font-size: 1.25rem;
+  }
+
+  .step-description {
+    font-size: 0.95rem;
+  }
+
+  /* Options grid */
+  .options-grid {
+    gap: 10px;
+    column-gap: 8px;
+  }
+
+  .option-card {
+    padding: 12px;
+    max-width: 150px;
+    gap: 8px;
+  }
+
+  .option-icon {
+    font-size: 1.5rem;
+  }
+
+  .option-label {
+    font-size: 0.95rem;
+  }
+
+  /* Forms */
+  .form-group {
+    margin-bottom: 18px;
+  }
+
+  .form-group label {
+    font-size: 0.925rem;
+    margin-bottom: 6px;
+  }
+
+  .form-group input,
+  .form-group select {
+    padding: 12px 14px;
+    font-size: 0.925rem;
+  }
+
+  /* Checkbox cards */
+  .checkbox-card {
+    padding: 16px;
+    gap: 12px;
+  }
+
+  .checkbox-card .text strong {
+    font-size: 0.95rem;
+  }
+
+  .checkbox-card .text span {
+    font-size: 0.875rem;
+  }
+
+  /* Actions */
+  .onboarding-actions {
+    margin-top: 32px;
+  }
+
+  .btn-primary {
+    padding: 14px 32px;
+    font-size: 1rem;
+  }
+
+  /* Loading screen */
+  .loading-card h3 {
+    font-size: 1.5rem;
+  }
+
+  .loading-card p {
+    font-size: 1.1rem;
   }
 }
 

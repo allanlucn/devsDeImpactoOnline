@@ -182,6 +182,9 @@ const ShareCardPage = () => {
               
               {/* Branding at bottom */}
               <div className="pb-4">
+                <p className="text-xs font-bold text-white/90 text-center tracking-wide mt-1">
+                  Acesse e participe!
+                </p>
                 <p className="text-xs font-bold text-white/80 text-center tracking-wider">
                   RadarCidadao
                 </p>
