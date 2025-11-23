@@ -136,3 +136,66 @@ async def pressure_endpoint(payload: dict = Body(...), authorization: Optional[s
     except Exception as e:
         logging.error(f"Erro no endpoint de pressão: {str(e)}")
         raise HTTPException(status_code=500, detail=str(e))
+
+
+@router.post("/card-text")
+async def generate_card_text(payload: dict = Body(...), authorization: Optional[str] = Header(None)):
+    """Gera título e subtítulo para card de protesto.
+    
+    Body:
+    {
+        "newsContent": "texto da notícia...",
+        "profile": {"occupation": "motorista de app"}
+    }
+    
+    Response:
+    {
+        "status": "done",
+        "title": "MOTORISTAS EM ALERTA!",
+        "subtitle": "O PL 234 quer taxar..."
+    }
+    """
+    try:
+        news_content = payload.get("newsContent", "")
+        profile = payload.get("profile", {})
+        
+        if not news_content:
+            raise HTTPException(status_code=400, detail="newsContent é obrigatório")
+        
+        from agents.card_prompt import build_card_system_message, build_card_user_message
+        from agents.groq_client import call_groq_chat
+        
+        system_msg = build_card_system_message()
+        user_msg = build_card_user_message(news_content, profile)
+        
+        messages = [
+            {"role": "system", "content": system_msg},
+            {"role": "user", "content": user_msg}
+        ]
+        
+        # Não usar web_search para geração criativa
+        res = await call_groq_chat(messages=messages, enable_web_search=False)
+        
+        if res.get("error"):
+            raise Exception(res.get("error"))
+        
+        # Parse do JSON retornado pela IA
+        ai_response = res.get("text", "")
+        try:
+            card_data = json.loads(ai_response)
+            return {
+                "status": "done",
+                "title": card_data.get("title", "ALERTA!"),
+                "subtitle": card_data.get("subtitle", "Seus direitos estão em risco.")
+            }
+        except json.JSONDecodeError:
+            # Fallback se a IA não retornar JSON válido
+            return {
+                "status": "done",
+                "title": "ALERTA!",
+                "subtitle": ai_response[:150]  # Limita a 150 caracteres
+            }
+    
+    except Exception as e:
+        logging.error(f"Erro ao gerar texto do card: {str(e)}")
+        raise HTTPException(status_code=500, detail=str(e))
