@@ -1,4 +1,4 @@
-import React, { useState, useRef } from 'react';
+import React, { useState, useRef, useEffect } from 'react';
 import { useNavigate, useLocation } from 'react-router-dom';
 import { ArrowLeft, Download, Share2 } from 'lucide-react';
 import html2canvas from 'html2canvas';
@@ -10,10 +10,11 @@ const ShareCardPage = () => {
   const news = location.state?.news;
   const cardRef = useRef(null);
 
-  const cardText = {
+  const [cardText, setCardText] = useState({
     title: "MOTORISTAS EM ALERTA!",
     subtitle: "O PL 234 quer taxar nossas corridas. Vão mexer no nosso dinheiro. Eu já votei contra. Faça sua parte!"
-  };
+  });
+  const [isGenerating, setIsGenerating] = useState(false);
 
   const backgroundOptions = [
     { id: 1, name: 'Fogo', gradient: 'linear-gradient(135deg, #FF416C 0%, #FF4B2B 100%)' },
@@ -24,6 +25,47 @@ const ShareCardPage = () => {
 
   const [selectedBackground, setSelectedBackground] = useState(backgroundOptions[0]);
   const [currentBgIndex, setCurrentBgIndex] = useState(0);
+
+  // Gerar texto ao montar o componente
+  useEffect(() => {
+    generateCardText();
+  }, []);
+
+  const generateCardText = async () => {
+    setIsGenerating(true);
+    try {
+      const storedProfile = localStorage.getItem("userProfile");
+      const profile = storedProfile ? JSON.parse(storedProfile) : {};
+
+      const response = await fetch("http://localhost:8000/agents/card-text", {
+        method: "POST",
+        headers: {
+          "Content-Type": "application/json",
+        },
+        body: JSON.stringify({
+          newsContent: news?.content || news?.summary || news?.title || "",
+          profile: {
+            occupation: profile.occupation || profile.job || "trabalhador",
+          },
+        }),
+      });
+
+      if (!response.ok) {
+        throw new Error("Falha ao gerar texto do card");
+      }
+
+      const data = await response.json();
+      setCardText({
+        title: data.title,
+        subtitle: data.subtitle,
+      });
+    } catch (error) {
+      console.error("Erro ao gerar texto do card:", error);
+      // Mantém texto padrão em caso de erro
+    } finally {
+      setIsGenerating(false);
+    }
+  };
 
   const changeBackground = (index) => {
     setCurrentBgIndex(index);
@@ -110,6 +152,16 @@ const ShareCardPage = () => {
             className="aspect-[9/16] rounded-2xl p-8 flex flex-col items-center justify-center text-center relative overflow-hidden shadow-lg mb-6"
             style={{ background: selectedBackground.gradient }}
           >
+            {/* Loading State */}
+            {isGenerating && (
+              <div className="absolute inset-0 bg-black/50 rounded-2xl flex items-center justify-center z-20">
+                <div className="text-white text-center">
+                  <div className="animate-spin w-8 h-8 border-4 border-white border-t-transparent rounded-full mx-auto mb-2"></div>
+                  <p className="text-sm">Gerando mensagem...</p>
+                </div>
+              </div>
+            )}
+            
             {/* Text Content */}
             <div className="relative z-10 flex flex-col h-full">
               <div className="flex-1 flex flex-col items-center justify-center text-center">
