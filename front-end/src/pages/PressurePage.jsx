@@ -1,6 +1,6 @@
 import React, { useState, useEffect } from 'react';
 import { useNavigate, useLocation } from 'react-router-dom';
-import { ArrowLeft, Share2, MessageCircle, FileText, Activity, Info, ThumbsDown, Flame, Bot } from 'lucide-react';
+import { ArrowLeft, Share2, MessageCircle, FileText, Activity, Info, ThumbsDown, ThumbsUp, Flame } from 'lucide-react';
 
 const PressurePage = () => {
   const navigate = useNavigate();
@@ -10,37 +10,7 @@ const PressurePage = () => {
   const [activeTab, setActiveTab] = useState('detalhes');
   const [pressureCount, setPressureCount] = useState(1240);
   const [hasPressed, setHasPressed] = useState(false);
-  const [aiSummary, setAiSummary] = useState(null);
-  const [loadingSummary, setLoadingSummary] = useState(false);
-
-  const fetchPressureSummary = async () => {
-    setLoadingSummary(true);
-    try {
-      const storedProfile = localStorage.getItem('userProfile');
-      const profile = storedProfile ? JSON.parse(storedProfile) : {};
-
-      const response = await fetch('http://localhost:8000/agents/pressure', {
-        method: 'POST',
-        headers: {
-          'Content-Type': 'application/json',
-        },
-        body: JSON.stringify({
-          text: news.content || news.summary || news.title,
-          profile: profile
-        }),
-      });
-
-      if (!response.ok) throw new Error('Falha ao gerar resumo');
-      
-      const data = await response.json();
-      setAiSummary(data.text);
-    } catch (error) {
-      console.error("Erro ao buscar resumo de pressão:", error);
-      setAiSummary("Não foi possível gerar o resumo de impacto no momento.");
-    } finally {
-      setLoadingSummary(false);
-    }
-  };
+  const [decision, setDecision] = useState(null);
 
   const handlePressure = () => {
     if (!hasPressed) {
@@ -114,55 +84,71 @@ const PressurePage = () => {
             </div>
           </div>
 
-          {/* AI Summary */}
-          <div className="bg-primary/5 rounded-xl p-4 mb-6 border border-primary/10">
-            <div className="flex items-center gap-2 mb-2 text-primary font-bold text-sm">
-              <Bot className="w-4 h-4" />
-              Resumo por IA
+          {/* Decision Buttons */}
+          {!decision && (
+            <div className="bg-card border border-border rounded-2xl p-6 shadow-sm mb-6">
+              <p className="text-lg font-bold text-center mb-4">Qual sua posição sobre este projeto?</p>
+              <div className="flex gap-3">
+                <button 
+                  onClick={() => setDecision('support')}
+                  className="flex-1 py-4 bg-green-100 hover:bg-green-200 text-green-700 rounded-xl font-bold text-base transition-colors flex items-center justify-center gap-2"
+                >
+                  <ThumbsUp className="w-5 h-5" />
+                  Apoio
+                </button>
+                <button 
+                  onClick={() => setDecision('oppose')}
+                  className="flex-1 py-4 bg-red-100 hover:bg-red-200 text-red-700 rounded-xl font-bold text-base transition-colors flex items-center justify-center gap-2"
+                >
+                  <ThumbsDown className="w-5 h-5" />
+                  Não Apoio
+                </button>
+              </div>
             </div>
-            
-            {!aiSummary && !loadingSummary && (
+          )}
+
+          {/* Support Feedback */}
+          {decision === 'support' && (
+            <div className="bg-green-50 border border-green-100 rounded-2xl p-6 text-center shadow-sm mb-6 animate-in fade-in slide-in-from-bottom-4">
+              <div className="w-12 h-12 bg-green-100 rounded-full flex items-center justify-center mx-auto mb-3">
+                <ThumbsUp className="w-6 h-6 text-green-600" />
+              </div>
+              <h3 className="text-lg font-bold text-green-800 mb-2">Obrigado pelo apoio!</h3>
+              <p className="text-green-700/80 text-sm">
+                Sua opinião foi registrada. É importante que os representantes saibam quem apoia a medida.
+              </p>
+            </div>
+          )}
+
+          {/* Pressure Section (Only if Oppose) */}
+          {decision === 'oppose' && (
+            <div className="animate-in fade-in slide-in-from-bottom-4 space-y-4">
+              <div className="bg-red-50 border border-red-100 rounded-xl p-4 mb-4">
+                <p className="text-sm text-red-800 font-medium text-center">
+                  Você não está sozinho! Junte-se a outros cidadãos.
+                </p>
+              </div>
+
               <button 
-                onClick={fetchPressureSummary}
-                className="w-full py-2 bg-primary/10 hover:bg-primary/20 text-primary rounded-lg text-sm font-medium transition-colors flex items-center justify-center gap-2"
+                onClick={handlePressure}
+                disabled={hasPressed}
+                className={`w-full font-bold py-3.5 rounded-xl transition-colors flex items-center justify-center gap-2 shadow-sm ${
+                  hasPressed 
+                    ? 'bg-gray-300 text-gray-600 cursor-not-allowed'
+                    : 'bg-orange-500 hover:bg-orange-600 text-white'
+                }`}
               >
-                <Bot className="w-4 h-4" />
-                Gerar Análise de Impacto
+                <Flame className={`w-5 h-5 ${hasPressed ? '' : 'animate-pulse'}`} />
+                {hasPressed ? 'Pressão Realizada!' : 'Fazer Pressão Agora'}
               </button>
-            )}
 
-            {loadingSummary && (
-              <div className="flex items-center gap-2 text-sm text-muted-foreground py-2">
-                <div className="animate-spin w-4 h-4 border-2 border-primary border-t-transparent rounded-full"></div>
-                Analisando impacto financeiro e riscos...
-              </div>
-            )}
-
-            {aiSummary && (
-              <div className="text-sm text-foreground/90 leading-relaxed prose prose-sm max-w-none animate-in fade-in duration-500">
-                <div dangerouslySetInnerHTML={{ __html: aiSummary?.replace(/\n/g, '<br/>').replace(/\*\*(.*?)\*\*/g, '<strong class="text-foreground">$1</strong>') }} />
-              </div>
-            )}
-          </div>
-
-          <button 
-            onClick={handlePressure}
-            disabled={hasPressed}
-            className={`w-full font-bold py-3.5 rounded-xl transition-colors flex items-center justify-center gap-2 shadow-sm mb-3 ${
-              hasPressed 
-                ? 'bg-gray-300 text-gray-600 cursor-not-allowed'
-                : 'bg-orange-500 hover:bg-orange-600 text-white'
-            }`}
-          >
-            <Flame className={`w-5 h-5 ${hasPressed ? '' : 'animate-pulse'}`} />
-            {hasPressed ? 'Pressão Realizada!' : 'Fazer Pressão Agora'}
-          </button>
-
-          {hasPressed && (
-            <button className="w-full bg-[#25D366] hover:bg-[#128C7E] text-white font-bold py-3.5 rounded-xl transition-colors flex items-center justify-center gap-2 shadow-sm animate-in fade-in slide-in-from-bottom-2 duration-500">
-              <MessageCircle className="w-5 h-5" />
-              Compartilhe no WhatsApp
-            </button>
+              {hasPressed && (
+                <button className="w-full bg-[#25D366] hover:bg-[#128C7E] text-white font-bold py-3.5 rounded-xl transition-colors flex items-center justify-center gap-2 shadow-sm animate-in fade-in slide-in-from-bottom-2 duration-500">
+                  <MessageCircle className="w-5 h-5" />
+                  Compartilhe no WhatsApp
+                </button>
+              )}
+            </div>
           )}
         </section>
 

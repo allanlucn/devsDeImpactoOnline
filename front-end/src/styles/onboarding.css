@@ -531,3 +531,4 @@
   margin-top: 0.5rem;
   min-width: auto;
 }
+/* Dark Mode SVG Fix */.dark .dark-mode-svg {  filter: brightness(0) invert(1);  opacity: 0.9;}

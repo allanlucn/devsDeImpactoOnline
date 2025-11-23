@@ -42,7 +42,7 @@ const FeedbacksPage = () => {
       {/* Header */}
       <header className="flex items-center justify-between px-4 py-4 border-b border-border bg-background sticky top-0 z-10">
         <div className="flex items-center gap-3">
-          <button onClick={() => navigate(-1)} className="p-2 -ml-2 hover:bg-accent rounded-full">
+          <button onClick={() => navigate('/news')} className="p-2 -ml-2 hover:bg-accent rounded-full">
             <ChevronLeft className="w-6 h-6" />
           </button>
           <h1 className="text-lg font-semibold">Seu Impacto</h1>

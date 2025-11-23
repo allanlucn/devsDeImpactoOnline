@@ -1,6 +1,6 @@
 import React, { useState } from 'react';
 import { useNavigate } from 'react-router-dom';
-import { ArrowLeft, Sparkles, Send, ThumbsUp, ThumbsDown } from 'lucide-react';
+import { ArrowLeft, Sparkles, Send, ThumbsUp, ThumbsDown, Megaphone } from 'lucide-react';
 
 const NewsDetail = ({ news, onBack, onAskAI, onAddComment, onLikeComment }) => {
   const navigate = useNavigate();
@@ -56,10 +56,10 @@ const NewsDetail = ({ news, onBack, onAskAI, onAddComment, onLikeComment }) => {
 
           <button 
             onClick={() => navigate('/pressure', { state: { news } })}
-            className="w-full flex items-center justify-center gap-2 bg-red-500 hover:bg-red-600 active:bg-red-700 text-white font-semibold py-3.5 rounded-xl transition-colors shadow-sm"
+            className="w-full flex items-center justify-center gap-2 bg-orange-500 hover:bg-orange-600 active:bg-orange-700 text-white font-semibold py-3.5 rounded-xl transition-colors shadow-sm"
           >
-            <ThumbsDown className="w-5 h-5" />
-            Não Apoio
+            <Megaphone className="w-5 h-5" />
+            Participe
           </button>
         </div>
 

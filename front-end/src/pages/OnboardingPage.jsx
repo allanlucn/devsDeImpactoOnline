@@ -6,7 +6,9 @@ import { createUser } from "../api/users";
 import LoginModal from "../components/LoginModal";
 
 import appIcon from "../assets/svgs/onboarding/app.svg";
+import funcPublicoIcon from "../assets/svgs/onboarding/funcPublico.svg";
 import informalIcon from "../assets/svgs/onboarding/informal.svg";
+import cltIcon from "../assets/svgs/onboarding/clt.svg";
 import studentIcon from "../assets/svgs/onboarding/student.svg";
 import meiIcon from "../assets/svgs/onboarding/MEI.svg";
 
@@ -36,9 +38,9 @@ const OnboardingPage = () => {
 
   const occupations = [
     { label: "Trabalhador de aplicativos", icon: appIcon, isSvg: true },
-    { label: "Funcionário Público", icon: "🏛️", isSvg: false },
+    { label: "Funcionário Público", icon: funcPublicoIcon, isSvg: true },
     { label: "Trabalhador informal", icon: informalIcon, isSvg: true },
-    { label: "CLT", icon: "💼", isSvg: false },
+    { label: "CLT", icon: cltIcon, isSvg: true },
     { label: "Estudante", icon: studentIcon, isSvg: true },
     { label: "MEI", icon: meiIcon, isSvg: true },
   ];
@@ -176,7 +178,7 @@ const OnboardingPage = () => {
           >
             <span className="option-icon">
               {opt.isSvg ? (
-                <img src={opt.icon} alt={opt.label} className="w-8 h-8 object-contain" />
+                <img src={opt.icon} alt={opt.label} className="w-8 h-8 object-contain dark-mode-svg" />
               ) : (
                 opt.icon
               )}
