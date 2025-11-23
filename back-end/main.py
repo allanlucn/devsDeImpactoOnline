@@ -6,21 +6,8 @@ import logging
 load_dotenv()
 
 from core.config import settings
-
-logging.basicConfig(level=logging.INFO)
-logger = logging.getLogger(__name__)
-
-try:
-    from api.v1 import api_router
-except ImportError:
-    logger.warning("api_router não encontrado em api.v1. Verifique os imports.")
-    api_router = None
-
-try:
-    from agents.routes import router as agents_router
-except ImportError:
-    logger.warning("agents_router não encontrado. Verifique se o arquivo agents/routes.py existe.")
-    agents_router = None
+from api.v1 import api_router
+from agents.routes import router as agents_router
 
 def create_app() -> FastAPI:
     application = FastAPI(

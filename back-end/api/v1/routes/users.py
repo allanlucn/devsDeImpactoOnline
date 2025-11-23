@@ -29,3 +29,6 @@ def delete_user(user_id: int, db: Session = Depends(get_db)):
     UserService.delete_user(db, user_id)
     return None
 
+@router.post("/login", response_model=UserResponse)
+def login(user_phone: str, db: Session = Depends(get_db)):
+    return UserService.auth(db, user_phone)
