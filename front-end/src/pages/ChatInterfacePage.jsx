@@ -12,14 +12,19 @@ const ChatInterfacePage = () => {
   const [inputText, setInputText] = useState('');
   const [isLoading, setIsLoading] = useState(false);
   const messagesEndRef = useRef(null);
+  const hasInitializedRef = useRef(false);
 
   const [currentChatId, setCurrentChatId] = useState(null);
 
   // Load initial context or history if available
   useEffect(() => {
+    // Prevent duplicate execution in Strict Mode or re-renders
+    if (hasInitializedRef.current) return;
+    
     if (location.state?.chatHistoryItem) {
       setMessages(location.state.chatHistoryItem.messages);
       setCurrentChatId(location.state.chatHistoryItem.id);
+      hasInitializedRef.current = true;
     } else if (location.state?.context) {
       const news = location.state.context;
       const newChatId = Date.now();
@@ -31,10 +36,12 @@ const ChatInterfacePage = () => {
       };
       setCurrentChatId(newChatId);
       setMessages([initialMessage]);
-      handleSendMessage(initialMessage.text, newChatId);
+      sendInitialMessage(initialMessage.text, newChatId);
+      hasInitializedRef.current = true;
     } else {
       // Start a fresh chat if no context
       setCurrentChatId(Date.now());
+      hasInitializedRef.current = true;
     }
   }, [location.state]);
 
@@ -45,6 +52,42 @@ const ChatInterfacePage = () => {
   useEffect(() => {
     scrollToBottom();
   }, [messages]);
+
+  // Function to send initial message from news context (avoids duplication)
+  const sendInitialMessage = async (text, chatId) => {
+    setIsLoading(true);
+
+    try {
+      const userProfile = JSON.parse(localStorage.getItem('userProfile') || '{}');
+      
+      const botResponse = await sendMessageToApi(text, userProfile);
+      
+      const botMessage = {
+        ...botResponse,
+        timestamp: new Date().toISOString()
+      };
+
+      setMessages(prev => {
+        const newMessages = [...prev, botMessage];
+        setTimeout(() => saveChatHistory(newMessages, chatId), 0);
+        return newMessages;
+      });
+
+    } catch (error) {
+      console.error('Error sending message:', error);
+      const errorMessage = {
+        id: Date.now() + 1,
+        text: "Desculpe, não consegui processar sua mensagem no momento. Tente novamente mais tarde.",
+        sender: 'bot',
+        timestamp: new Date().toISOString(),
+        isError: true
+      };
+      
+      setMessages(prev => [...prev, errorMessage]);
+    } finally {
+      setIsLoading(false);
+    }
+  };
 
   const handleSendMessage = async (text = inputText, chatId = currentChatId) => {
     if (!text.trim()) return;

@@ -88,14 +88,7 @@ const Sidebar = ({ isOpen, onClose }) => {
               <Newspaper className="w-5 h-5" />
               <span>Notícias</span>
             </button>
-            <button 
-              onClick={() => handleNavigation('/news')} // Placeholder for now
-              className="flex items-center gap-3 px-4 py-3 text-foreground hover:bg-accent/50 rounded-xl transition-colors text-left font-medium"
-            >
-              <MessageSquare className="w-5 h-5" />
-              <span>Fórum</span>
-            </button>
-            
+
             {/* History Section */}
             <div className="mt-2">
               <div className="flex items-center gap-3 px-4 py-2 text-muted-foreground font-medium">

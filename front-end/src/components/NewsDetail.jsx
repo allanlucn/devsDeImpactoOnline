@@ -1,7 +1,9 @@
 import React, { useState } from 'react';
-import { ArrowLeft, Sparkles, Send, ThumbsUp } from 'lucide-react';
+import { useNavigate } from 'react-router-dom';
+import { ArrowLeft, Sparkles, Send, ThumbsUp, ThumbsDown } from 'lucide-react';
 
 const NewsDetail = ({ news, onBack, onAskAI, onAddComment, onLikeComment }) => {
+  const navigate = useNavigate();
   const [commentText, setCommentText] = useState('');
 
   const handleSubmitComment = (e) => {
@@ -43,13 +45,21 @@ const NewsDetail = ({ news, onBack, onAskAI, onAddComment, onLikeComment }) => {
         </article>
 
         {/* AI Action */}
-        <div className="mb-10">
+        <div className="mb-10 space-y-3">
           <button 
             onClick={() => onAskAI(news)}
             className="w-full flex items-center justify-center gap-2 bg-primary hover:bg-primary/90 active:bg-primary/80 text-white font-semibold py-3.5 rounded-xl transition-colors shadow-sm"
           >
             <Sparkles className="w-5 h-5" />
-            Perguntar p/ IA
+            Pergunte para o RadarCidadao
+          </button>
+
+          <button 
+            onClick={() => navigate('/pressure', { state: { news } })}
+            className="w-full flex items-center justify-center gap-2 bg-red-500 hover:bg-red-600 active:bg-red-700 text-white font-semibold py-3.5 rounded-xl transition-colors shadow-sm"
+          >
+            <ThumbsDown className="w-5 h-5" />
+            Não Apoio
           </button>
         </div>
 

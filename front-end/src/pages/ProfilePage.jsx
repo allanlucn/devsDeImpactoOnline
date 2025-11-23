@@ -1,17 +1,55 @@
-import React, { useState } from 'react';
+import React, { useState, useEffect } from 'react';
 import { useNavigate } from 'react-router-dom';
-import { ChevronRight, ChevronLeft } from 'lucide-react';
+import { ChevronRight, ChevronLeft, Edit2, Check, X } from 'lucide-react';
 import { ThemeToggle } from '../components/ThemeToggle';
 
 const ProfilePage = () => {
   const navigate = useNavigate();
   const [pushEnabled, setPushEnabled] = useState(true);
   const [emailEnabled, setEmailEnabled] = useState(true);
+  const [userProfile, setUserProfile] = useState(null);
+  const [isEditingInterests, setIsEditingInterests] = useState(false);
+  const [selectedInterests, setSelectedInterests] = useState([]);
 
-  const interests = [
+  const availableInterests = [
     "Saúde", "Educação", "Transporte", 
-    "Segurança Pública", "Meio Ambiente"
+    "Segurança Pública", "Meio Ambiente",
+    "Tecnologia", "Cultura", "Esportes",
+    "Economia", "Habitação"
   ];
+
+  useEffect(() => {
+    const storedProfile = localStorage.getItem('userProfile');
+    if (storedProfile) {
+      const parsedProfile = JSON.parse(storedProfile);
+      setUserProfile(parsedProfile);
+      setSelectedInterests(parsedProfile.interests || []);
+    }
+  }, []);
+
+  const toggleInterest = (interest) => {
+    if (selectedInterests.includes(interest)) {
+      setSelectedInterests(selectedInterests.filter(i => i !== interest));
+    } else {
+      setSelectedInterests([...selectedInterests, interest]);
+    }
+  };
+
+  const saveInterests = () => {
+    if (userProfile) {
+      const updatedProfile = { ...userProfile, interests: selectedInterests };
+      localStorage.setItem('userProfile', JSON.stringify(updatedProfile));
+      setUserProfile(updatedProfile);
+      setIsEditingInterests(false);
+    }
+  };
+
+  const cancelEditInterests = () => {
+    if (userProfile) {
+      setSelectedInterests(userProfile.interests || []);
+      setIsEditingInterests(false);
+    }
+  };
 
   return (
     <div className="min-h-screen bg-background text-foreground pb-20">
@@ -44,16 +82,64 @@ const ProfilePage = () => {
 
         {/* Interests Section */}
         <section>
-          <h2 className="text-xs font-semibold text-muted-foreground uppercase mb-3 tracking-wider">Meus Interesses</h2>
-          <div className="flex flex-wrap gap-2">
-            {interests.map((interest) => (
-              <span 
-                key={interest}
-                className="px-3 py-1.5 bg-primary/10 text-primary rounded-full text-sm font-medium"
+          <div className="flex items-center justify-between mb-3">
+            <h2 className="text-xs font-semibold text-muted-foreground uppercase tracking-wider">Meus Interesses</h2>
+            {!isEditingInterests ? (
+              <button 
+                onClick={() => setIsEditingInterests(true)}
+                className="text-xs text-primary font-medium flex items-center gap-1 hover:underline"
               >
-                {interest}
-              </span>
-            ))}
+                <Edit2 className="w-3 h-3" /> Editar
+              </button>
+            ) : (
+              <div className="flex gap-2">
+                <button 
+                  onClick={cancelEditInterests}
+                  className="p-1 text-red-500 hover:bg-red-500/10 rounded-full"
+                  title="Cancelar"
+                >
+                  <X className="w-4 h-4" />
+                </button>
+                <button 
+                  onClick={saveInterests}
+                  className="p-1 text-green-500 hover:bg-green-500/10 rounded-full"
+                  title="Salvar"
+                >
+                  <Check className="w-4 h-4" />
+                </button>
+              </div>
+            )}
+          </div>
+          
+          <div className="flex flex-wrap gap-2">
+            {isEditingInterests ? (
+              availableInterests.map((interest) => (
+                <button 
+                  key={interest}
+                  onClick={() => toggleInterest(interest)}
+                  className={`px-3 py-1.5 rounded-full text-sm font-medium transition-colors border ${
+                    selectedInterests.includes(interest)
+                      ? "bg-primary/10 text-primary border-primary/20"
+                      : "bg-card text-muted-foreground border-border hover:bg-accent"
+                  }`}
+                >
+                  {interest}
+                </button>
+              ))
+            ) : (
+              selectedInterests.length > 0 ? (
+                selectedInterests.map((interest) => (
+                  <span 
+                    key={interest}
+                    className="px-3 py-1.5 bg-primary/10 text-primary rounded-full text-sm font-medium"
+                  >
+                    {interest}
+                  </span>
+                ))
+              ) : (
+                <p className="text-sm text-muted-foreground italic">Nenhum interesse selecionado.</p>
+              )
+            )}
           </div>
         </section>
 
@@ -71,7 +157,7 @@ const ProfilePage = () => {
 
         {/* Activity Chart Section */}
         <section>
-          <h2 className="text-sm font-medium mb-4">Activity last 30 days</h2>
+          <h2 className="text-sm font-medium mb-4">Atividade dos últimos 30 dias</h2>
           <div className="h-40 w-full bg-card rounded-xl border border-border p-4 flex items-end justify-center relative overflow-hidden">
              {/* Simple SVG Line Chart */}
              <svg viewBox="0 0 100 40" className="w-full h-full overflow-visible" preserveAspectRatio="none">
@@ -120,10 +206,15 @@ const ProfilePage = () => {
             Salvar Alterações
           </button>
           <button 
-            onClick={() => navigate('/')}
-            className="w-full text-primary font-medium py-2 hover:underline"
+            onClick={() => {
+              localStorage.removeItem('userProfile');
+              localStorage.removeItem('userId');
+              localStorage.removeItem('chatHistory');
+              navigate('/');
+            }}
+            className="w-full flex items-center justify-center gap-2 p-4 text-red-500 hover:bg-red-500/10 rounded-xl transition-colors font-medium mt-4"
           >
-            Sair
+            Sair da Conta
           </button>
         </div>
       </main>

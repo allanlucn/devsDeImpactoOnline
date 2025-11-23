@@ -72,7 +72,7 @@ const FeedbacksPage = () => {
 
         {/* Chart Section */}
         <section className="bg-card rounded-3xl p-6 shadow-sm border border-border">
-          <h2 className="text-sm font-medium mb-4">Activity last 30 days</h2>
+          <h2 className="text-sm font-medium mb-4">Atividade dos últimos 30 dias</h2>
           <div className="h-32 w-full flex items-end justify-center relative overflow-hidden">
              {/* SVG Line Chart matching the reference */}
              <svg viewBox="0 0 100 40" className="w-full h-full overflow-visible" preserveAspectRatio="none">
@@ -91,7 +91,7 @@ const FeedbacksPage = () => {
 
         {/* Recent Activity List */}
         <section>
-          <h2 className="text-lg font-bold mb-4">Recent Activity</h2>
+          <h2 className="text-lg font-bold mb-4">Atividade recente</h2>
           <div className="space-y-3">
             {recentActivity.map((activity) => (
               <div key={activity.id} className="bg-card rounded-2xl p-4 flex items-center gap-4 shadow-sm border border-border">

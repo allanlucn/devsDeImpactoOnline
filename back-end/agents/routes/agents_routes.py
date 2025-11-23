@@ -99,3 +99,40 @@ async def transcribe_endpoint(file: UploadFile = File(...), metadata: Optional[s
         "raw": summary_res.get("raw"), 
         "text": summary_res.get("text")
     }
+
+
+@router.post("/pressure")
+async def pressure_endpoint(payload: dict = Body(...), authorization: Optional[str] = Header(None)):
+    """Gera resumo focado em pressão popular (riscos e impacto financeiro)."""
+    text = payload.get("text")
+    if not text:
+        raise HTTPException(status_code=400, detail="Campo 'text' obrigatório")
+
+    profile = payload.get("profile") or {}
+
+    # Importa aqui para evitar ciclo ou carrega do novo arquivo
+    from agents.pressure_prompt import build_pressure_system_message, build_pressure_user_message
+    
+    # Monta mensagens customizadas
+    system_msg = build_pressure_system_message()
+    user_msg = build_pressure_user_message(text, profile)
+
+    try:
+        from agents.groq_client import call_groq_chat
+        
+        messages = [
+            {"role": "system", "content": system_msg},
+            {"role": "user", "content": user_msg}
+        ]
+        
+        # Chama o client da Groq diretamente
+        res = await call_groq_chat(messages=messages, enable_web_search=False)
+        
+        if res.get("error"):
+            raise Exception(res.get("error"))
+            
+        return {"status": "done", "text": res.get("text")}
+
+    except Exception as e:
+        logging.error(f"Erro no endpoint de pressão: {str(e)}")
+        raise HTTPException(status_code=500, detail=str(e))

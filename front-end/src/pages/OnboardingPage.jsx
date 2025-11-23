@@ -5,6 +5,11 @@ import { ThemeToggle } from "../components/ThemeToggle";
 import { createUser } from "../api/users";
 import LoginModal from "../components/LoginModal";
 
+import appIcon from "../assets/svgs/onboarding/app.svg";
+import informalIcon from "../assets/svgs/onboarding/informal.svg";
+import studentIcon from "../assets/svgs/onboarding/student.svg";
+import meiIcon from "../assets/svgs/onboarding/MEI.svg";
+
 const OnboardingPage = () => {
   const navigate = useNavigate();
   const [step, setStep] = useState(1);
@@ -23,18 +28,26 @@ const OnboardingPage = () => {
     alertUrgent: false,
     phone: "",
     zipcode: "",
+    interests: [],
   });
   const [error, setError] = useState("");
 
-  const totalSteps = 3;
+  const totalSteps = 4;
 
   const occupations = [
-    { label: "Trabalhador de app", icon: "📱", subtitle: "Uber/Ifood" },
-    { label: "Funcionário Público", icon: "🏛️", subtitle: "Policial, Professor" },
-    { label: "Autônomo", icon: "🔧", subtitle: "Pedreiro, Vendedor" },
-    { label: "CLT", icon: "💼", subtitle: "Estoquista, Enfermeiro(a)" },
-    { label: "Estudante", icon: "🎓", subtitle: "Bolsista, Pesquisador" },
-    { label: "MEI", icon: "🏪", subtitle: "Freelancer, Empresário" },
+    { label: "Trabalhador de aplicativos", icon: appIcon, isSvg: true },
+    { label: "Funcionário Público", icon: "🏛️", isSvg: false },
+    { label: "Trabalhador informal", icon: informalIcon, isSvg: true },
+    { label: "CLT", icon: "💼", isSvg: false },
+    { label: "Estudante", icon: studentIcon, isSvg: true },
+    { label: "MEI", icon: meiIcon, isSvg: true },
+  ];
+
+  const availableInterests = [
+    "Saúde", "Educação", "Transporte", 
+    "Segurança Pública", "Meio Ambiente",
+    "Tecnologia", "Cultura", "Esportes",
+    "Economia", "Habitação"
   ];
 
   const handleInputChange = (e) => {
@@ -47,6 +60,17 @@ const OnboardingPage = () => {
 
   const handleOccupationSelect = (occupation) => {
     setFormData((prev) => ({ ...prev, occupation }));
+  };
+
+  const toggleInterest = (interest) => {
+    setFormData((prev) => {
+      const currentInterests = prev.interests || [];
+      if (currentInterests.includes(interest)) {
+        return { ...prev, interests: currentInterests.filter(i => i !== interest) };
+      } else {
+        return { ...prev, interests: [...currentInterests, interest] };
+      }
+    });
   };
 
   const nextStep = () => {
@@ -90,6 +114,7 @@ const OnboardingPage = () => {
         job_label: formData.occupation,
         zipcode: cleanZipcode,
         alert_urgent: formData.alertUrgent,
+        interests: formData.interests,
       };
 
       console.log(userData)
@@ -108,6 +133,7 @@ const OnboardingPage = () => {
         race: formData.race,
         state: formData.state,
         phone: cleanPhone,
+        interests: formData.interests,
       };
       localStorage.setItem("userProfile", JSON.stringify(userProfile));
       localStorage.setItem("userId", createdUser.id.toString());
@@ -130,12 +156,12 @@ const OnboardingPage = () => {
   const progressPercent = (step / totalSteps) * 100;
 
   // Render Steps
-  const renderStep1 = () => (
+  const renderOccupationStep = () => (
     <div className="onboarding-content">
       <div className="step-header">
-        <h2>Qual é o seu corre?</h2>
+        <h2>O que você faz?</h2>
         <p className="step-description">
-          Para a IA filtrar apenas o alertas que afetam a sua vida.
+          Selecione para filtramos as atualizações que afetam a sua <span style={{ fontWeight: "bold" }}>vida</span>.
         </p>
       </div>
 
@@ -148,11 +174,14 @@ const OnboardingPage = () => {
             }`}
             onClick={() => handleOccupationSelect(opt.label)}
           >
-            <span className="option-icon">{opt.icon}</span>
+            <span className="option-icon">
+              {opt.isSvg ? (
+                <img src={opt.icon} alt={opt.label} className="w-8 h-8 object-contain" />
+              ) : (
+                opt.icon
+              )}
+            </span>
             <span className="option-label">{opt.label}</span>
-            {opt.subtitle && (
-              <span className="option-subtitle">{opt.subtitle}</span>
-            )}
           </button>
         ))}
       </div>
@@ -174,7 +203,7 @@ const OnboardingPage = () => {
     </div>
   );
 
-  const renderStep2 = () => (
+  const renderDemographicsStep = () => (
     <div className="onboarding-content">
       <div className="step-header">
         <h2>Quem é você?</h2>
@@ -268,6 +297,36 @@ const OnboardingPage = () => {
   );
 
   const renderStep3 = () => (
+    <div className="onboarding-content">
+      <div className="step-header">
+        <h2>O que te interessa?</h2>
+        <p className="step-description">
+          Selecione os temas que você quer acompanhar.
+        </p>
+      </div>
+
+      <div className="flex flex-wrap gap-3 justify-center">
+        {availableInterests.map((interest) => (
+          <button
+            key={interest}
+            onClick={() => toggleInterest(interest)}
+            className={`px-4 py-2 rounded-full text-sm font-medium transition-all ${
+              formData.interests.includes(interest)
+                ? "bg-primary text-primary-foreground shadow-md scale-105"
+                : "bg-accent/50 text-foreground hover:bg-accent"
+            }`}
+          >
+            {interest}
+          </button>
+        ))}
+      </div>
+      <div className="mt-4 text-center text-sm text-muted-foreground">
+        {formData.interests.length === 0 ? "Selecione pelo menos um interesse" : `${formData.interests.length} selecionado(s)`}
+      </div>
+    </div>
+  );
+
+  const renderStep4 = () => (
     <div className="onboarding-content">
       <div className="step-header">
         <h2>Ativar Radar</h2>
@@ -385,9 +444,10 @@ const OnboardingPage = () => {
         </header>
 
         <main>
-          {step === 1 && renderStep1()}
-          {step === 2 && renderStep2()}
+          {step === 1 && renderDemographicsStep()}
+          {step === 2 && renderOccupationStep()}
           {step === 3 && renderStep3()}
+          {step === 4 && renderStep4()}
         </main>
 
         <div className="onboarding-actions">
@@ -396,13 +456,14 @@ const OnboardingPage = () => {
               {error}
             </div>
           )}
-          {step < 3 ? (
+          {step < totalSteps ? (
             <button 
               className="btn-primary" 
               onClick={nextStep}
               disabled={
-                (step === 1 && !formData.occupation) ||
-                (step === 2 && !formData.state)
+                (step === 1 && !formData.state) ||
+                (step === 2 && !formData.occupation) ||
+                (step === 3 && formData.interests.length === 0)
               }
             >
               Continuar &gt;

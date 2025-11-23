@@ -16,13 +16,13 @@
     --primary: 262 83% 58%;
     --primary-foreground: 0 0% 100%;
 
-    --secondary: 25 95% 85%;
+    --secondary: 262 83% 90%;
     --secondary-foreground: 222 47% 11%;
 
     --muted: 210 40% 96%;
     --muted-foreground: 215 16% 47%;
 
-    --accent: 25 95% 85%;
+    --accent: 262 83% 90%;
     --accent-foreground: 222 47% 11%;
 
     --destructive: 0 84% 60%;
@@ -34,7 +34,7 @@
 
     --radius: 0.75rem;
 
-    --hero-bg: 25 95% 85%;
+    --hero-bg: 262 83% 90%;
     --stats-bg: 221 83% 53%;
     --stats-foreground: 0 0% 100%;
 
