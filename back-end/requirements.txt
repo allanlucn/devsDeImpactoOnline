@@ -10,3 +10,4 @@ httpx
 python-dotenv
 python-multipart
 pydantic
+apscheduler==3.10.4

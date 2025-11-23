@@ -1,5 +1,6 @@
 from pydantic import BaseModel, Field
 from typing import Optional
+from datetime import datetime
 
 
 class UserBase(BaseModel):
@@ -10,6 +11,7 @@ class UserBase(BaseModel):
     job_label: str = Field(..., max_length=50, description="Classificação do trabalho")
     name: str = Field(..., max_length=50, description="Nome do usuário")
     alert_urgent: bool = Field(default=False, description="Receber alertas urgentes")
+    last_notification_sent: Optional[datetime] = Field(None, description="Data/hora da última notificação enviada")
 
 
 class UserCreate(UserBase):
@@ -19,6 +21,7 @@ class UserCreate(UserBase):
 class UserResponse(UserBase):
     id: int
     address_id: int
+    last_notification_sent: Optional[datetime] = None
 
     class Config:
         from_attributes = True
