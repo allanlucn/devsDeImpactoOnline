@@ -26,7 +26,6 @@ const LandingPage = () => {
             <div className="flex items-center gap-4">
               <ThemeToggle />
               <Button variant="outline" onClick={() => setShowLoginModal(true)}>Entrar</Button>
-              <Button onClick={() => navigate("/onboarding")}>Começar</Button>
             </div>
           </div>
         </div>

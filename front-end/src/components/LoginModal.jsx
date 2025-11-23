@@ -86,6 +86,18 @@ const LoginModal = ({ isOpen, onClose }) => {
           >
             {isLoading ? "Entrando..." : "Entrar"}
           </button>
+
+          <button 
+            type="button" 
+            className="btn-login mt-3"
+            style={{ background: 'hsl(var(--secondary))', opacity: 0.9 }}
+            onClick={() => {
+              onClose();
+              navigate('/onboarding');
+            }}
+          >
+            Cadastrar
+          </button>
         </form>
       </div>
     </div>

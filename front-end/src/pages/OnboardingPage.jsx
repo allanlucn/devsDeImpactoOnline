@@ -161,9 +161,9 @@ const OnboardingPage = () => {
   const renderOccupationStep = () => (
     <div className="onboarding-content">
       <div className="step-header">
-        <h2>O que você faz?</h2>
+        <h2>Qual é a sua Categoria?</h2>
         <p className="step-description">
-          Selecione para filtramos as atualizações que afetam a sua <span style={{ fontWeight: "bold" }}>vida</span>.
+          Personalize seu Radar para receber apenas alertas relevantes para sua profissão.
         </p>
       </div>
 
@@ -210,8 +210,10 @@ const OnboardingPage = () => {
       <div className="step-header">
         <h2>Quem é você?</h2>
         <p className="step-description">
-          Leis podem mudar dependendo de quem você é e onde mora.
+          Existem Leis e benefícios exclusivos para você!
+          Preencha para nao perder nada!
         </p>
+        <p className="text-primary " style={{ fontSize: "15px"}}>(Dados 100% anonimos)</p>
       </div>
 
       <div className="form-grid-2col">
@@ -331,9 +333,9 @@ const OnboardingPage = () => {
   const renderStep4 = () => (
     <div className="onboarding-content">
       <div className="step-header">
-        <h2>Ativar Radar</h2>
+        <h2>Ative seu Radar!</h2>
         <p className="step-description">
-          Último passo para ativar sua proteção.
+          Cadastre seu WhatsApp para saber assim que surgir uma nova atualização que te afeta.
         </p>
       </div>
 
