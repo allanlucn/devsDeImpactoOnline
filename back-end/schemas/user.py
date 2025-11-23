@@ -1,5 +1,6 @@
-from typing import TYPE_CHECKING
-from sqlalchemy import CHAR, ForeignKey, String
+from typing import TYPE_CHECKING, Optional
+from datetime import datetime
+from sqlalchemy import CHAR, ForeignKey, String, DateTime
 from sqlalchemy.orm import Mapped, mapped_column, relationship
 from schemas.base import Base
 
@@ -21,6 +22,7 @@ class User(Base):
     alert_urgent: Mapped[bool] 
     address_id: Mapped[int] = mapped_column(ForeignKey("address.id"))
     address: Mapped["Address"] = relationship(back_populates="residents")
+    last_notification_sent: Mapped[Optional[datetime]] = mapped_column(DateTime, nullable=True)
    
     def __repr__(self):
         return f"<User(id={self.id}, phone='{self.phone}', job='{self.job}')>"

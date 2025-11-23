@@ -1,6 +1,3 @@
-"""
-Serviço de recomendação de notícias baseado em perfil socioeconômico do usuário.
-"""
 from typing import List, Dict, Set, Optional
 
 
