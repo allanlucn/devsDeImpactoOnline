@@ -1,85 +1,116 @@
 import { useState, useEffect } from 'react';
-import { fetchNewsApi, likeNewsApi, likeCommentApi } from '../api/news';
+import { 
+  fetchNewsApi, 
+  getCommentsApi, 
+  addCommentApi, 
+  likeCommentApi,
+  getNewsReactionsApi,
+  toggleNewsReactionApi 
+} from '../api/news';
 
 export const useNews = () => {
   const [newsItems, setNewsItems] = useState([]);
+  const [userId, setUserId] = useState(null);
 
   useEffect(() => {
     const storedProfile = localStorage.getItem('userProfile');
     if (storedProfile) {
       const userProfile = JSON.parse(storedProfile);
       if (userProfile.id) {
+        setUserId(userProfile.id);
         fetchNewsApi(userProfile.id).then(data => setNewsItems(data));
       }
     }
   }, []);
 
-  const handleLikeNews = (id) => {
-    // Optimistic update
-    setNewsItems(prev => prev.map(item => {
-      if (item.id === id) {
-        const isLiked = item.likedByUser;
-        return { 
-          ...item, 
-          likes: isLiked ? item.likes - 1 : item.likes + 1,
-          likedByUser: !isLiked
-        };
-      }
-      return item;
-    }));
-    likeNewsApi(id);
+  const loadComments = async (newsId) => {
+    if (!userId) return;
+    
+    const comments = await getCommentsApi(newsId, userId);
+    setNewsItems(prev => prev.map(item => 
+      item.id === newsId ? { ...item, comments } : item
+    ));
   };
 
-  const handleLikeComment = (newsId, commentId) => {
-    // Optimistic update
-    setNewsItems(prev => prev.map(item => {
-      if (item.id !== newsId) return item;
-      return {
-        ...item,
-        comments: item.comments.map(c => {
-          if (c.id === commentId) {
-            const isLiked = c.likedByUser;
-            return { 
-              ...c, 
-              likes: isLiked ? c.likes - 1 : c.likes + 1,
-              likedByUser: !isLiked
-            };
-          }
-          return c;
-        }).sort((a, b) => b.likes - a.likes)
-      };
-    }));
-    likeCommentApi(newsId, commentId);
+  const loadReactions = async (newsId) => {
+    if (!userId) return;
+    
+    const reactions = await getNewsReactionsApi(newsId, userId);
+    setNewsItems(prev => prev.map(item => 
+      item.id === newsId ? { 
+        ...item, 
+        likes: reactions.likes_count,
+        dislikes: reactions.dislikes_count,
+        userReaction: reactions.user_reaction
+      } : item
+    ));
   };
 
-  const handleAddComment = (newsId, text) => {
-    const storedProfile = localStorage.getItem('userProfile');
-    const userProfile = storedProfile ? JSON.parse(storedProfile) : {};
-    const userName = userProfile.name || 'Você';
+  const handleLikeNews = async (newsId) => {
+    if (!userId) return;
+    
+    try {
+      const result = await toggleNewsReactionApi(newsId, userId, 'like');
+      setNewsItems(prev => prev.map(item => 
+        item.id === newsId ? {
+          ...item,
+          likes: result.stats.likes_count,
+          dislikes: result.stats.dislikes_count,
+          userReaction: result.stats.user_reaction
+        } : item
+      ));
+    } catch (error) {
+      console.error('Erro ao curtir notícia:', error);
+    }
+  };
 
-    const newComment = {
-      id: Date.now(), // Temporary ID
-      user: userName,
-      avatar: `https://api.dicebear.com/7.x/avataaars/svg?seed=${userName}`,
-      text,
-      likes: 0,
-      likedByUser: false
-    };
+  const handleDislikeNews = async (newsId) => {
+    if (!userId) return;
+    
+    try {
+      const result = await toggleNewsReactionApi(newsId, userId, 'dislike');
+      setNewsItems(prev => prev.map(item => 
+        item.id === newsId ? {
+          ...item,
+          likes: result.stats.likes_count,
+          dislikes: result.stats.dislikes_count,
+          userReaction: result.stats.user_reaction
+        } : item
+      ));
+    } catch (error) {
+      console.error('Erro ao descurtir notícia:', error);
+    }
+  };
 
-    setNewsItems(prev => prev.map(item => {
-      if (item.id !== newsId) return item;
-      return {
-        ...item,
-        comments: [newComment, ...item.comments]
-      };
-    }));
-    // Call API to add comment would go here
+  const handleLikeComment = async (newsId, commentId) => {
+    if (!userId) return;
+    
+    try {
+      await likeCommentApi(commentId, userId);
+      await loadComments(newsId);
+    } catch (error) {
+      console.error('Erro ao curtir comentário:', error);
+    }
+  };
+
+  const handleAddComment = async (newsId, text) => {
+    if (!userId || !text.trim()) return;
+    
+    try {
+      await addCommentApi(newsId, userId, text);
+      await loadComments(newsId);
+    } catch (error) {
+      console.error('Erro ao adicionar comentário:', error);
+    }
   };
 
   return {
     newsItems,
     handleLikeNews,
+    handleDislikeNews,
     handleLikeComment,
-    handleAddComment
+    handleAddComment,
+    loadComments,
+    loadReactions
   };
 };

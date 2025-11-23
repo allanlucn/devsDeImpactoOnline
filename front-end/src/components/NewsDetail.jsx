@@ -2,20 +2,27 @@ import React, { useState } from 'react';
 import { useNavigate } from 'react-router-dom';
 import { ArrowLeft, Sparkles, Send, ThumbsUp, ThumbsDown, Megaphone } from 'lucide-react';
 
-const NewsDetail = ({ news, onBack, onAskAI, onAddComment, onLikeComment }) => {
+const NewsDetail = ({ news, onBack, onAskAI, onAddComment, onLikeComment, onLikeNews, onDislikeNews }) => {
   const navigate = useNavigate();
   const [commentText, setCommentText] = useState('');
 
-  const handleSubmitComment = (e) => {
+  const handleSubmitComment = async (e) => {
     e.preventDefault();
     if (!commentText.trim()) return;
-    onAddComment(news.id, commentText);
+    await onAddComment(news.id, commentText);
     setCommentText('');
+  };
+
+  const handleLikeNews = () => {
+    if (onLikeNews) onLikeNews(news.id);
+  };
+
+  const handleDislikeNews = () => {
+    if (onDislikeNews) onDislikeNews(news.id);
   };
 
   return (
     <div className="bg-background min-h-screen pb-20">
-      {/* Header */}
       <header className="sticky top-0 z-10 bg-background border-b border-border px-4 py-3 flex items-center gap-3">
         <button 
           onClick={onBack}
@@ -27,16 +34,41 @@ const NewsDetail = ({ news, onBack, onAskAI, onAddComment, onLikeComment }) => {
       </header>
 
       <div className="p-4 max-w-md mx-auto">
-        {/* News Content */}
         <article className="mb-8">
           <h1 className="text-2xl font-bold text-foreground mb-2 leading-tight">
             {news.title}
           </h1>
           
-          <div className="flex items-center gap-2 text-sm text-muted-foreground mb-6">
+          <div className="flex items-center gap-2 text-sm text-muted-foreground mb-4">
             <span className="font-medium text-primary">{news.source}</span>
             <span>|</span>
             <span>{news.date}</span>
+          </div>
+
+          <div className="flex items-center gap-4 mb-6">
+            <button
+              onClick={handleLikeNews}
+              className={`flex items-center gap-2 px-4 py-2 rounded-lg transition-colors ${
+                news.userReaction === 'like' 
+                  ? 'bg-primary text-white' 
+                  : 'bg-accent text-foreground hover:bg-accent/80'
+              }`}
+            >
+              <ThumbsUp className={`w-4 h-4 ${news.userReaction === 'like' ? 'fill-current' : ''}`} />
+              <span className="font-medium">{news.likes || 0}</span>
+            </button>
+            
+            <button
+              onClick={handleDislikeNews}
+              className={`flex items-center gap-2 px-4 py-2 rounded-lg transition-colors ${
+                news.userReaction === 'dislike' 
+                  ? 'bg-red-500 text-white' 
+                  : 'bg-accent text-foreground hover:bg-accent/80'
+              }`}
+            >
+              <ThumbsDown className={`w-4 h-4 ${news.userReaction === 'dislike' ? 'fill-current' : ''}`} />
+              <span className="font-medium">{news.dislikes || 0}</span>
+            </button>
           </div>
 
           <div className="prose dark:prose-invert max-w-none text-foreground leading-relaxed whitespace-pre-line">
@@ -44,7 +76,6 @@ const NewsDetail = ({ news, onBack, onAskAI, onAddComment, onLikeComment }) => {
           </div>
         </article>
 
-        {/* AI Action */}
         <div className="mb-10 space-y-3">
           <button 
             onClick={() => onAskAI(news)}
@@ -63,7 +94,6 @@ const NewsDetail = ({ news, onBack, onAskAI, onAddComment, onLikeComment }) => {
           </button>
         </div>
 
-        {/* Comments Section */}
         <section>
           <h3 className="text-lg font-bold text-foreground mb-4">Comentários</h3>
           
@@ -100,7 +130,6 @@ const NewsDetail = ({ news, onBack, onAskAI, onAddComment, onLikeComment }) => {
             )}
           </div>
 
-          {/* Add Comment Input */}
           <form onSubmit={handleSubmitComment} className="relative">
             <input
               type="text"

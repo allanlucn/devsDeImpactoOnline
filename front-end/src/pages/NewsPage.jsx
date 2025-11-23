@@ -9,16 +9,28 @@ import Sidebar from '../components/Sidebar';
 
 const NewsPage = () => {
   const navigate = useNavigate();
-  const { newsItems, handleAddComment, handleLikeComment } = useNews();
+  const { 
+    newsItems, 
+    handleAddComment, 
+    handleLikeComment, 
+    handleLikeNews,
+    handleDislikeNews,
+    loadComments,
+    loadReactions
+  } = useNews();
   const [selectedNews, setSelectedNews] = useState(null);
   const [isSidebarOpen, setIsSidebarOpen] = useState(false);
 
-  // Handler for the "Perguntar p/ IA" button inside the detail view
   const handleAskAI = (news) => {
     navigate('/chat', { state: { context: news } });
   };
 
-  // Derive the active news item from the main state to ensure updates (likes, comments) are reflected
+  const handleSelectNews = async (news) => {
+    setSelectedNews(news);
+    await loadComments(news.id);
+    await loadReactions(news.id);
+  };
+
   const activeNews = selectedNews ? newsItems.find(n => n.id === selectedNews.id) : null;
 
   if (activeNews) {
@@ -29,6 +41,8 @@ const NewsPage = () => {
         onAskAI={handleAskAI}
         onAddComment={handleAddComment}
         onLikeComment={handleLikeComment}
+        onLikeNews={handleLikeNews}
+        onDislikeNews={handleDislikeNews}
       />
     );
   }
@@ -43,7 +57,7 @@ const NewsPage = () => {
           <NewsCard 
             key={news.id} 
             news={news} 
-            onClick={setSelectedNews}
+            onClick={handleSelectNews}
           />
         ))}
       </main>

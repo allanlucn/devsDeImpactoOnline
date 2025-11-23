@@ -74,10 +74,99 @@ export const fetchNewsApi = async (userId) => {
   }
 };
 
-export const likeNewsApi = async (id) => {
-  return { success: true };
+export const getCommentsApi = async (newsId, userId) => {
+  try {
+    const url = new URL(`${API_BASE_URL}/api/v1/comments/news/${newsId}`);
+    if (userId) url.searchParams.append('user_id', userId);
+    
+    const response = await fetch(url);
+    if (!response.ok) throw new Error(`Erro ao buscar comentários: ${response.status}`);
+    
+    const data = await response.json();
+    return data.map(comment => ({
+      id: comment.id,
+      user: `Usuário ${comment.user_id}`,
+      avatar: `https://api.dicebear.com/7.x/avataaars/svg?seed=${comment.user_id}`,
+      text: comment.content,
+      likes: comment.likes_count,
+      likedByUser: comment.user_has_liked,
+      created_at: comment.created_at
+    }));
+  } catch (error) {
+    console.error('Erro ao buscar comentários:', error);
+    return [];
+  }
 };
 
-export const likeCommentApi = async (newsId, commentId) => {
-  return { success: true };
+export const addCommentApi = async (newsId, userId, content) => {
+  try {
+    const response = await fetch(`${API_BASE_URL}/api/v1/comments/`, {
+      method: 'POST',
+      headers: { 'Content-Type': 'application/json' },
+      body: JSON.stringify({ news_id: newsId, user_id: userId, content })
+    });
+    
+    if (!response.ok) throw new Error(`Erro ao adicionar comentário: ${response.status}`);
+    
+    const data = await response.json();
+    return {
+      id: data.id,
+      user: `Usuário ${data.user_id}`,
+      avatar: `https://api.dicebear.com/7.x/avataaars/svg?seed=${data.user_id}`,
+      text: data.content,
+      likes: data.likes_count,
+      likedByUser: data.user_has_liked,
+      created_at: data.created_at
+    };
+  } catch (error) {
+    console.error('Erro ao adicionar comentário:', error);
+    throw error;
+  }
+};
+
+export const likeCommentApi = async (commentId, userId) => {
+  try {
+    const response = await fetch(
+      `${API_BASE_URL}/api/v1/reactions/comments/${commentId}/like?user_id=${userId}`,
+      { method: 'POST' }
+    );
+    
+    if (!response.ok) throw new Error(`Erro ao curtir comentário: ${response.status}`);
+    
+    return await response.json();
+  } catch (error) {
+    console.error('Erro ao curtir comentário:', error);
+    throw error;
+  }
+};
+
+export const getNewsReactionsApi = async (newsId, userId) => {
+  try {
+    const url = new URL(`${API_BASE_URL}/api/v1/reactions/news/${newsId}`);
+    if (userId) url.searchParams.append('user_id', userId);
+    
+    const response = await fetch(url);
+    if (!response.ok) throw new Error(`Erro ao buscar reações: ${response.status}`);
+    
+    return await response.json();
+  } catch (error) {
+    console.error('Erro ao buscar reações:', error);
+    return { likes_count: 0, dislikes_count: 0, user_reaction: null };
+  }
+};
+
+export const toggleNewsReactionApi = async (newsId, userId, reactionType) => {
+  try {
+    const response = await fetch(
+      `${API_BASE_URL}/api/v1/reactions/news/${newsId}/${reactionType}?user_id=${userId}`,
+      { method: 'POST' }
+    );
+    
+    if (!response.ok) throw new Error(`Erro ao reagir: ${response.status}`);
+    
+    return await response.json();
+  } catch (error) {
+    console.error('Erro ao reagir:', error);
+    throw error;
+  }
 };
