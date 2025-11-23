@@ -2,6 +2,7 @@ import { useState } from "react";
 import { useNavigate } from "react-router-dom";
 import "../styles/onboarding.css";
 import { ThemeToggle } from "../components/ThemeToggle";
+import { createUser } from "../api/users";
 
 const OnboardingPage = () => {
   const navigate = useNavigate();
@@ -18,9 +19,10 @@ const OnboardingPage = () => {
     race: "",
     state: "",
     alertUrgent: false,
-    alertPolls: false,
     phone: "",
+    zipcode: "",
   });
+  const [error, setError] = useState("");
 
   const totalSteps = 3;
 
@@ -55,31 +57,72 @@ const OnboardingPage = () => {
 
   const handleSubmit = async () => {
     setIsSubmitting(true);
+    setError("");
     setLoadingMessage("Salvando suas preferências...");
 
-    const userProfile = {
-      name: formData.firstName,
-      job: formData.occupationDetail || formData.occupation,
-      gender: formData.gender,
-      race: formData.race,
-      state: formData.state,
-    };
+    try {
+      // Mapeia o gênero para o formato esperado pela API (M/F/O)
+      const genderMap = {
+        "Mulher": "F",
+        "Homem": "M",
+        "Outro": "O"
+      };
 
-    // Salva no localStorage para uso no chat
-    localStorage.setItem("userProfile", JSON.stringify(userProfile));
+      // Remove caracteres não numéricos do telefone
+      const cleanPhone = formData.phone.replace(/\D/g, "");
+      
+      // Remove caracteres não numéricos do CEP
+      const cleanZipcode = formData.zipcode.replace(/\D/g, "");
 
-    // Simulate API call
-    setTimeout(() => {
+      // Valida se o CEP tem 8 dígitos
+      if (cleanZipcode.length !== 8) {
+        throw new Error("CEP deve ter 8 dígitos");
+      }
+
+      const userData = {
+        name: formData.firstName,
+        phone: cleanPhone,
+        gender: genderMap[formData.gender] || "O",
+        race: formData.race,
+        job: formData.occupationDetail || formData.occupation,
+        job_label: formData.occupation,
+        zipcode: cleanZipcode,
+        alert_urgent: formData.alertUrgent,
+      };
+
+      console.log(userData)
+
+      setLoadingMessage("Criando seu perfil...");
+      
+      // Envia os dados para o backend
+      const createdUser = await createUser(userData);
+
+      // Salva no localStorage para uso no chat
+      const userProfile = {
+        id: createdUser.id,
+        name: formData.firstName,
+        job: formData.occupationDetail || formData.occupation,
+        gender: formData.gender,
+        race: formData.race,
+        state: formData.state,
+        phone: cleanPhone,
+      };
+      localStorage.setItem("userProfile", JSON.stringify(userProfile));
+      localStorage.setItem("userId", createdUser.id.toString());
+
       setLoadingMessage("Configurando seu radar...");
-      setTimeout(() => {
-        setLoadingMessage("Tudo pronto!");
-        setTimeout(() => {
-          // Here we would send data to backend
-          // await api.post('/onboarding', finalData);
-          navigate("/news");
-        }, 1000);
-      }, 1500);
-    }, 1500);
+      await new Promise(resolve => setTimeout(resolve, 1000));
+      
+      setLoadingMessage("Tudo pronto!");
+      await new Promise(resolve => setTimeout(resolve, 800));
+      
+      navigate("/news");
+    } catch (err) {
+      console.error("Erro ao criar usuário:", err);
+      setError(err.message || "Erro ao salvar suas informações. Tente novamente.");
+      setIsSubmitting(false);
+      setLoadingMessage("");
+    }
   };
 
   const progressPercent = (step / totalSteps) * 100;
@@ -276,6 +319,19 @@ const OnboardingPage = () => {
           required
         />
       </div>
+
+      <div className="form-group">
+        <label>CEP (Código de Endereçamento Postal)</label>
+        <input
+          type="text"
+          name="zipcode"
+          placeholder="12345-678"
+          value={formData.zipcode}
+          onChange={handleInputChange}
+          maxLength="9"
+          required
+        />
+      </div>
     </div>
   );
 
@@ -324,6 +380,11 @@ const OnboardingPage = () => {
         </main>
 
         <div className="onboarding-actions">
+          {error && (
+            <div className="error-message" style={{ color: "red", marginBottom: "1rem", textAlign: "center" }}>
+              {error}
+            </div>
+          )}
           {step < 3 ? (
             <button 
               className="btn-primary" 
@@ -339,7 +400,7 @@ const OnboardingPage = () => {
             <button
               className="btn-primary"
               onClick={handleSubmit}
-              disabled={!formData.state || !formData.phone || formData.phone.length < 8}
+              disabled={!formData.state || !formData.phone || formData.phone.length < 8 || !formData.zipcode || formData.zipcode.replace(/\D/g, "").length !== 8}
             >
               Ativar Radar agora
             </button>

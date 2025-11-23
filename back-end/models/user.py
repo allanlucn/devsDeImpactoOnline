@@ -8,6 +8,8 @@ class UserBase(BaseModel):
     race: str = Field(..., max_length=14, description="Raça/Etnia")
     job: str = Field(..., max_length=50, description="Profissão")
     job_label: str = Field(..., max_length=50, description="Classificação do trabalho")
+    name: str = Field(..., max_length=50, description="Nome do usuário")
+    alert_urgent: bool = Field(default=False, description="Receber alertas urgentes")
 
 
 class UserCreate(UserBase):
