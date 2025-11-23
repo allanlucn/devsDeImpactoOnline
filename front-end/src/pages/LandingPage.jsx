@@ -3,7 +3,7 @@ import { useNavigate } from "react-router-dom";
 import { Button } from "../components/ui/button";
 import { Card, CardContent } from "../components/ui/card";
 import { MessageSquare, Scale, DollarSign, Send, Sparkles } from "lucide-react";
-import heroPhone from "../assets/hero-phone.png";
+import heroPhone from "../assets/hero-phoneNoBg.png";
 import logo from "../assets/logo.png";
 import "../styles/LandingPage.css";
 import { ThemeToggle } from "../components/ThemeToggle";
@@ -229,7 +229,7 @@ const LandingPage = () => {
             </p>
           </div>
           <div className="grid md:grid-cols-3 gap-8">
-            <Card className="p-6 hover:shadow-lg transition-shadow bg-card border-border">
+            <Card className="community-card p-6 bg-card border-border">
               <CardContent className="flex flex-col items-center text-center p-0">
                 <div className="mb-4 p-3 bg-primary/10 rounded-full text-primary">
                   <MessageSquare className="w-8 h-8" />
@@ -240,7 +240,7 @@ const LandingPage = () => {
                 </p>
               </CardContent>
             </Card>
-            <Card className="p-6 hover:shadow-lg transition-shadow bg-card border-border">
+            <Card className="community-card p-6 bg-card border-border">
               <CardContent className="flex flex-col items-center text-center p-0">
                 <div className="mb-4 p-3 bg-primary/10 rounded-full text-primary">
                   <Sparkles className="w-8 h-8" />
@@ -251,7 +251,7 @@ const LandingPage = () => {
                 </p>
               </CardContent>
             </Card>
-            <Card className="p-6 hover:shadow-lg transition-shadow bg-card border-border">
+            <Card className="community-card p-6 bg-card border-border">
               <CardContent className="flex flex-col items-center text-center p-0">
                 <div className="mb-4 p-3 bg-primary/10 rounded-full text-primary">
                   <Scale className="w-8 h-8" />

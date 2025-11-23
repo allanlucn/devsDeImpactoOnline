@@ -142,14 +142,28 @@
 
 .hero-phone {
   margin: 0 auto;
-  max-width: 20rem;
+  width: 100%;
+  max-width: 21.6rem;
   animation: fade-in 0.3s ease-out;
-  filter: drop-shadow(0 25px 25px rgb(0 0 0 / 0.15));
+  filter: drop-shadow(15px 10px 20px rgb(0 0 0 / 0.35)) 
+          drop-shadow(25px 25px 50px rgb(0 0 0 / 0.25));
+}
+
+@media (min-width: 640px) {
+  .hero-phone {
+    max-width: 26.4rem;
+  }
 }
 
 @media (min-width: 768px) {
   .hero-phone {
-    max-width: 24rem;
+    max-width: 31.2rem;
+  }
+}
+
+@media (min-width: 1024px) {
+  .hero-phone {
+    max-width: 36rem;
   }
 }
 
@@ -204,11 +218,22 @@
 .feature-card {
   border: none;
   box-shadow: 0 1px 3px 0 rgb(0 0 0 / 0.1);
-  transition: box-shadow 0.2s;
+  transition: all 0.3s ease;
 }
 
 .feature-card:hover {
-  box-shadow: 0 4px 6px -1px rgb(0 0 0 / 0.1);
+  box-shadow: 0 10px 25px -5px rgb(0 0 0 / 0.2), 0 8px 10px -6px rgb(0 0 0 / 0.1);
+  transform: translateY(-4px);
+}
+
+/* Community cards - same hover effect */
+.community-card {
+  transition: all 0.3s ease;
+}
+
+.community-card:hover {
+  box-shadow: 0 10px 25px -5px rgb(0 0 0 / 0.2), 0 8px 10px -6px rgb(0 0 0 / 0.1);
+  transform: translateY(-4px);
 }
 
 .feature-content {
