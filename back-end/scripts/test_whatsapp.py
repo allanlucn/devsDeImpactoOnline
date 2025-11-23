@@ -17,12 +17,11 @@ async def test_connection():
     print("="*80 + "\n")
     
     print(f"Instance ID: {settings.zapi_instance_id or '(nao configurado)'}")
-    print(f"Token: {'*' * 20 if settings.zapi_token else '(nao configurado)'}")
-    print(f"Client Token: {'*' * 20 if settings.zapi_client_token else '(nao configurado)'}\n")
+    print(f"Token: {'*' * 20 if settings.zapi_token else '(nao configurado)'}\n")
     
-    if not settings.zapi_instance_id or not settings.zapi_token or not settings.zapi_client_token:
+    if not settings.zapi_instance_id or not settings.zapi_token:
         print("Z-API nao configurada!")
-        print("Configure ZAPI_INSTANCE_ID, ZAPI_TOKEN e ZAPI_CLIENT_TOKEN no .env\n")
+        print("Configure ZAPI_INSTANCE_ID e ZAPI_TOKEN no .env\n")
         return False
     
     print("Verificando status da instancia...\n")
@@ -76,7 +75,7 @@ Se voce recebeu esta mensagem, o sistema esta funcionando corretamente!"""
     print("Enviando mensagem de teste...\n")
     
     result = await WhatsAppService.send_text_message(
-        phone=test_phone,
+        phone="5583981709739",
         text=test_message
     )
     
