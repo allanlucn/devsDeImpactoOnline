@@ -83,5 +83,4 @@ Gerencie suas preferências e veja seu histórico de interações.
 
 Desenvolvido durante o hackathon Devs de Impacto Online.
 
-
 **RadarCidadão** - Democracia baseada em dados.
