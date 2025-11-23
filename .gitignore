@@ -59,7 +59,7 @@ ehthumbs.db
 Desktop.ini
 
 # Python (back-end)
-_pycache_/
+__pycache__/
 *.py[cod]
 *$py.class
 *.so
@@ -96,3 +96,4 @@ htmlcov/
 
 #Arquivos adicionais
 figma/
+.gemini/

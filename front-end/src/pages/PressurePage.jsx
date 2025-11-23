@@ -139,13 +139,16 @@ const PressurePage = () => {
                 }`}
               >
                 <Flame className={`w-5 h-5 ${hasPressed ? '' : 'animate-pulse'}`} />
-                {hasPressed ? 'Pressão Realizada!' : 'Fazer Pressão Agora'}
+                {hasPressed ? 'Pressão Realizada!' : 'FaçaPressão Agora'}
               </button>
 
               {hasPressed && (
-                <button className="w-full bg-[#25D366] hover:bg-[#128C7E] text-white font-bold py-3.5 rounded-xl transition-colors flex items-center justify-center gap-2 shadow-sm animate-in fade-in slide-in-from-bottom-2 duration-500">
+                <button 
+                  onClick={() => navigate('/share-card', { state: { news } })}
+                  className="w-full bg-[#25D366] hover:bg-[#128C7E] text-white font-bold py-3.5 rounded-xl transition-colors flex items-center justify-center gap-2 shadow-sm animate-in fade-in slide-in-from-bottom-2 duration-500"
+                >
                   <MessageCircle className="w-5 h-5" />
-                  Compartilhe no WhatsApp
+                  Compartilhe
                 </button>
               )}
             </div>

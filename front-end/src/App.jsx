@@ -7,6 +7,7 @@ import ProfilePage from './pages/ProfilePage';
 import FeedbacksPage from './pages/FeedbacksPage';
 import ChatInterfacePage from './pages/ChatInterfacePage';
 import PressurePage from './pages/PressurePage';
+import ShareCardPage from './pages/ShareCardPage';
 import './index.css';
 
 function App() {
@@ -19,6 +20,7 @@ function App() {
         <Route path="/profile" element={<ProfilePage />} />
         <Route path="/feedbacks" element={<FeedbacksPage />} />
         <Route path="/pressure" element={<PressurePage />} />
+        <Route path="/share-card" element={<ShareCardPage />} />
         <Route path="/chat" element={<ChatInterfacePage />} />
       </Routes>
     </Router>
