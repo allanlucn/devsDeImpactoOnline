@@ -50,8 +50,15 @@ E não para por aí: os comentários mais curtidos da comunidade são sintetizad
 - **WhatsApp Web.js** - Notificações via WhatsApp
 - **API Dados Abertos Câmara** - Fonte de dados legislativos
 
+##  Prototipação
+
+- **[Figma](https://www.figma.com/design/jsHts5PYL1yiXTIcSichpr/PROJETO?node-id=201-418&t=2t7P4E95u8O3zUm9-1)**
 ---
 
+##  Documentação
+
+- **[Diagrama](https://excalidraw.com/#room=9f2fa5f96ab0dabb8148,eo59Vw1gSkO0uFg2te8y3Q)**
+---
 ## 🚀 Como Rodar
 
 ### Pré-requisitos
