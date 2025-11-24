@@ -379,11 +379,11 @@ npm run preview  # Testar build de produção
 
 Desenvolvido durante o **[Hackathon Devs de Impacto Online](https://devsdeimpacto.imasters.com.br/)** por:
 
-- **[Eduardo Henrique](https://www.linkedin.com/in/henriquebjj/)** - IA
-- **[Uilames de Assis](https://www.linkedin.com/in/uilames/)** - Dados
-- **[Allan Lucena](https://www.linkedin.com/in/allanlucn/)** - Front-end
-- **[Marcio Regio](https://www.linkedin.com/in/marciooregio/)** - UX/UI Designer
-- **[Lauro Stephan](https://www.linkedin.com/in/lauro-stephan-b4449124b/)** - Backend
+- **[Eduardo Henrique](https://www.linkedin.com/in/henriquebjj/)** Email: henriquebjj.uf@gmail.com - IA
+- **[Uilames de Assis](https://www.linkedin.com/in/uilames/)** Email: uilamesa.ferreira@gmail.com - Dados
+- **[Allan Lucena](https://www.linkedin.com/in/allanlucn/)** Email: allanmagalhaes2010@hotmail.com - Front-end
+- **[Marcio Regio](https://www.linkedin.com/in/marciooregio/)** Email: marcioreg77@gmail.com - UX/UI Designer
+- **[Lauro Stephan](https://www.linkedin.com/in/lauro-stephan-b4449124b/)** Email: laurostephan@gmail.com - Backend
 
 ---
 
