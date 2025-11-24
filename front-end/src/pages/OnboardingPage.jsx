@@ -216,18 +216,18 @@ const OnboardingPage = () => {
         <p className="text-primary " style={{ fontSize: "15px"}}>(Dados 100% anonimos)</p>
       </div>
 
-      <div className="form-grid-2col">
-        <div className="form-group full-width">
-          <label>Como você quer ser chamado?</label>
-          <input
-            type="text"
-            name="firstName"
-            placeholder="Seu primeiro nome"
-            value={formData.firstName}
-            onChange={handleInputChange}
-          />
-        </div>
+      <div className="form-group" style={{ maxWidth: '400px', margin: '0 auto 24px' }}>
+        <label>Como você quer ser chamado?</label>
+        <input
+          type="text"
+          name="firstName"
+          placeholder="Seu primeiro nome"
+          value={formData.firstName}
+          onChange={handleInputChange}
+        />
+      </div>
 
+      <div className="form-grid-2col">
         <div className="form-group">
           <label>Gênero</label>
           <select
@@ -259,43 +259,58 @@ const OnboardingPage = () => {
         </div>
       </div>
 
-      <div className="form-group">
-        <label>Onde você mora? (Estado/UF)</label>
-        <select
-          name="state"
-          value={formData.state}
-          onChange={handleInputChange}
-          required
-        >
-          <option value="">Selecione um estado</option>
-          <option value="AC">Acre</option>
-          <option value="AL">Alagoas</option>
-          <option value="AP">Amapá</option>
-          <option value="AM">Amazonas</option>
-          <option value="BA">Bahia</option>
-          <option value="CE">Ceará</option>
-          <option value="DF">Distrito Federal</option>
-          <option value="ES">Espírito Santo</option>
-          <option value="GO">Goiás</option>
-          <option value="MA">Maranhão</option>
-          <option value="MT">Mato Grosso</option>
-          <option value="MS">Mato Grosso do Sul</option>
-          <option value="MG">Minas Gerais</option>
-          <option value="PA">Pará</option>
-          <option value="PB">Paraíba</option>
-          <option value="PR">Paraná</option>
-          <option value="PE">Pernambuco</option>
-          <option value="PI">Piauí</option>
-          <option value="RJ">Rio de Janeiro</option>
-          <option value="RN">Rio Grande do Norte</option>
-          <option value="RS">Rio Grande do Sul</option>
-          <option value="RO">Rondônia</option>
-          <option value="RR">Roraima</option>
-          <option value="SC">Santa Catarina</option>
-          <option value="SP">São Paulo</option>
-          <option value="SE">Sergipe</option>
-          <option value="TO">Tocantins</option>
-        </select>
+      <div className="form-grid-2col">
+        <div className="form-group">
+          <label>Onde você mora? (Estado/UF)</label>
+          <select
+            name="state"
+            value={formData.state}
+            onChange={handleInputChange}
+            required
+          >
+            <option value="">Selecione um estado</option>
+            <option value="AC">Acre</option>
+            <option value="AL">Alagoas</option>
+            <option value="AP">Amapá</option>
+            <option value="AM">Amazonas</option>
+            <option value="BA">Bahia</option>
+            <option value="CE">Ceará</option>
+            <option value="DF">Distrito Federal</option>
+            <option value="ES">Espírito Santo</option>
+            <option value="GO">Goiás</option>
+            <option value="MA">Maranhão</option>
+            <option value="MT">Mato Grosso</option>
+            <option value="MS">Mato Grosso do Sul</option>
+            <option value="MG">Minas Gerais</option>
+            <option value="PA">Pará</option>
+            <option value="PB">Paraíba</option>
+            <option value="PR">Paraná</option>
+            <option value="PE">Pernambuco</option>
+            <option value="PI">Piauí</option>
+            <option value="RJ">Rio de Janeiro</option>
+            <option value="RN">Rio Grande do Norte</option>
+            <option value="RS">Rio Grande do Sul</option>
+            <option value="RO">Rondônia</option>
+            <option value="RR">Roraima</option>
+            <option value="SC">Santa Catarina</option>
+            <option value="SP">São Paulo</option>
+            <option value="SE">Sergipe</option>
+            <option value="TO">Tocantins</option>
+          </select>
+        </div>
+
+        <div className="form-group">
+          <label>CEP (Código Postal)</label>
+          <input
+            type="text"
+            name="zipcode"
+            placeholder="12345-678"
+            value={formData.zipcode}
+            onChange={handleInputChange}
+            maxLength="9"
+            required
+          />
+        </div>
       </div>
     </div>
   );
@@ -385,18 +400,7 @@ const OnboardingPage = () => {
         />
       </div>
 
-      <div className="form-group">
-        <label>CEP (Código de Endereçamento Postal)</label>
-        <input
-          type="text"
-          name="zipcode"
-          placeholder="12345-678"
-          value={formData.zipcode}
-          onChange={handleInputChange}
-          maxLength="9"
-          required
-        />
-      </div>
+
     </div>
   );
 
@@ -465,7 +469,7 @@ const OnboardingPage = () => {
               className="btn-primary" 
               onClick={nextStep}
               disabled={
-                (step === 1 && !formData.state) ||
+                (step === 1 && (!formData.state || !formData.zipcode || formData.zipcode.replace(/\D/g, "").length !== 8)) ||
                 (step === 2 && !formData.occupation) ||
                 (step === 3 && formData.interests.length === 0)
               }
@@ -476,7 +480,7 @@ const OnboardingPage = () => {
             <button
               className="btn-primary"
               onClick={handleSubmit}
-              disabled={!formData.state || !formData.phone || formData.phone.length < 8 || !formData.zipcode || formData.zipcode.replace(/\D/g, "").length !== 8}
+              disabled={!formData.phone || formData.phone.length < 8}
             >
               Ativar Radar agora
             </button>

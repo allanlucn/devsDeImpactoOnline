@@ -3,7 +3,7 @@ import { useNavigate } from "react-router-dom";
 import { Button } from "../components/ui/button";
 import { Card, CardContent } from "../components/ui/card";
 import { MessageSquare, Scale, DollarSign, Send, Sparkles } from "lucide-react";
-import heroPhone from "../assets/hero-phoneNoBg.png";
+import heroPhone from "../assets/phoneimg.png";
 import logo from "../assets/logo.png";
 import "../styles/LandingPage.css";
 import { ThemeToggle } from "../components/ThemeToggle";

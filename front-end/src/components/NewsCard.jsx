@@ -2,17 +2,64 @@ import React from 'react';
 import { Sparkles } from 'lucide-react';
 
 const NewsCard = ({ news, onClick }) => {
-  // Helper to determine tag color based on category
-  const getTagColor = (category) => {
-    const colors = {
-      'Trabalho': 'bg-primary/10 text-primary',
-      'Meio Ambiente': 'bg-green-100 text-green-700',
-      'Saúde': 'bg-teal-100 text-teal-700',
-      'Economia': 'bg-primary/10 text-primary', // Using primary as default/similar to image
-      'Política': 'bg-orange-100 text-orange-700',
+  // Helper to get tag styling based on tag type
+  const getTagStyle = (tag) => {
+    const tagStyles = {
+      'app': {
+        bgColor: 'bg-purple-500',
+        textColor: 'text-white',
+        label: 'APP'
+      },
+      'autonomo': {
+        bgColor: 'bg-blue-500',
+        textColor: 'text-white',
+        label: 'Autônomo'
+      },
+      'mei': {
+        bgColor: 'bg-indigo-500',
+        textColor: 'text-white',
+        label: 'MEI'
+      },
+      'geral': {
+        bgColor: 'bg-gray-500',
+        textColor: 'text-white',
+        label: 'Geral'
+      },
+      'clt': {
+        bgColor: 'bg-green-500',
+        textColor: 'text-white',
+        label: 'CLT'
+      },
+      'estudante': {
+        bgColor: 'bg-cyan-500',
+        textColor: 'text-white',
+        label: 'Estudante'
+      },
+      'mulher': {
+        bgColor: 'bg-pink-500',
+        textColor: 'text-white',
+        label: 'Mulher'
+      },
+      'homem': {
+        bgColor: 'bg-blue-600',
+        textColor: 'text-white',
+        label: 'Homem'
+      },
+      'funcpublico': {
+        bgColor: 'bg-amber-500',
+        textColor: 'text-white',
+        label: 'Func. Público'
+      }
     };
-    return colors[category] || 'bg-gray-100 text-gray-700';
+    
+    return tagStyles[tag] || {
+      bgColor: 'bg-gray-400',
+      textColor: 'text-white',
+      label: tag
+    };
   };
+
+  const tagStyle = getTagStyle(news.category?.toLowerCase() || '');
 
   return (
     <div 
@@ -20,8 +67,8 @@ const NewsCard = ({ news, onClick }) => {
       className="bg-card p-4 rounded-2xl shadow-sm border border-border mb-4 cursor-pointer hover:shadow-md transition-shadow active:scale-[0.99] transition-transform"
     >
       <div className="flex items-center gap-3 mb-3">
-        <span className={`px-3 py-1 rounded-full text-xs font-medium ${getTagColor(news.category)}`}>
-          {news.category}
+        <span className={`px-3 py-1 rounded-full text-xs font-medium ${tagStyle.bgColor} ${tagStyle.textColor}`}>
+          {tagStyle.label}
         </span>
         <span className="text-xs text-muted-foreground font-medium">
           {news.timestamp || 'Recentemente'}
