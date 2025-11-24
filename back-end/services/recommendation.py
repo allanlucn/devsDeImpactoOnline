@@ -2,6 +2,35 @@ from typing import List, Dict, Set, Optional
 
 
 class RecommendationService:
+    
+    JOB_LABEL_MAPPING = {
+        'Trabalhador de aplicativos': 'app',
+        'Funcionário Público': 'funcPublico',
+        'Trabalhador informal': 'autonomo',
+        'CLT': 'clt',
+        'Estudante': 'estudante',
+        'MEI': 'mei'
+    }
+    
+    GENDER_TAG_MAPPING = {
+        'M': 'homem',
+        'F': 'mulher'
+    }
+    
+    EXCLUSION_RULES = {
+        'job': {
+            'app': ['clt', 'funcPublico', 'mei'],
+            'funcPublico': ['clt', 'app', 'autonomo', 'mei'],
+            'autonomo': ['clt', 'funcPublico', 'app'],
+            'clt': ['funcPublico', 'autonomo', 'mei', 'app'],
+            'mei': ['clt', 'funcPublico', 'app'],
+            'estudante': []
+        },
+        'gender': {
+            'homem': ['mulher'],
+            'mulher': ['homem']
+        }
+    }
 
     GENDER_TOPICS = {
         'F': [
@@ -178,37 +207,28 @@ class RecommendationService:
         return score
     
     @classmethod
-    def should_exclude_project(cls, project_tags: List[str], gender: str, job_label: str) -> bool:
-        tags_lower = [tag.lower() for tag in project_tags]
+    def should_exclude_project(
+        cls,
+        project_tags: List[str],
+        user_job_label: str,
+        user_gender: str
+    ) -> bool:
+        project_tags_lower = [tag.lower() for tag in (project_tags or [])]
         
-        gender_exclusions = {
-            'M': ['mulher'],
-            'F': ['homem'],
-            'O': []
-        }
+        user_job_tag = cls.JOB_LABEL_MAPPING.get(user_job_label, '').lower()
+        user_gender_tag = cls.GENDER_TAG_MAPPING.get(user_gender, '').lower()
         
-        job_exclusions = {
-            'autonomo': ['clt', 'funcpublico'],
-            'clt': ['autonomo', 'mei', 'funcpublico'],
-            'mei': ['clt', 'funcpublico'],
-            'funcpublico': ['clt', 'autonomo', 'mei'],
-            'estudante': [],
-            'desempregado': [],
-            'aposentado': [],
-            'formal': ['autonomo', 'mei'],
-            'informal': ['clt', 'funcpublico']
-        }
+        if user_job_tag and user_job_tag in cls.EXCLUSION_RULES['job']:
+            excluded_job_tags = cls.EXCLUSION_RULES['job'][user_job_tag]
+            for excluded_tag in excluded_job_tags:
+                if excluded_tag.lower() in project_tags_lower:
+                    return True
         
-        excluded_gender_tags = gender_exclusions.get(gender, [])
-        for excluded_tag in excluded_gender_tags:
-            if excluded_tag in tags_lower:
-                return True
-        
-        job_label_lower = job_label.lower() if job_label else ''
-        excluded_job_tags = job_exclusions.get(job_label_lower, [])
-        for excluded_tag in excluded_job_tags:
-            if excluded_tag in tags_lower:
-                return True
+        if user_gender_tag and user_gender_tag in cls.EXCLUSION_RULES['gender']:
+            excluded_gender_tags = cls.EXCLUSION_RULES['gender'][user_gender_tag]
+            for excluded_tag in excluded_gender_tags:
+                if excluded_tag.lower() in project_tags_lower:
+                    return True
         
         return False
     
@@ -241,7 +261,7 @@ class RecommendationService:
                 elif isinstance(project.tags_ia, list):
                     tags = project.tags_ia
             
-            if cls.should_exclude_project(tags, gender, job_label):
+            if cls.should_exclude_project(tags, job_label, gender):
                 continue
             
             score = cls.calculate_relevance_score(tags, combined_text, user_topics, gender, race, job_label)
