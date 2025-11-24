@@ -178,6 +178,41 @@ class RecommendationService:
         return score
     
     @classmethod
+    def should_exclude_project(cls, project_tags: List[str], gender: str, job_label: str) -> bool:
+        tags_lower = [tag.lower() for tag in project_tags]
+        
+        gender_exclusions = {
+            'M': ['mulher'],
+            'F': ['homem'],
+            'O': []
+        }
+        
+        job_exclusions = {
+            'autonomo': ['clt', 'funcpublico'],
+            'clt': ['autonomo', 'mei', 'funcpublico'],
+            'mei': ['clt', 'funcpublico'],
+            'funcpublico': ['clt', 'autonomo', 'mei'],
+            'estudante': [],
+            'desempregado': [],
+            'aposentado': [],
+            'formal': ['autonomo', 'mei'],
+            'informal': ['clt', 'funcpublico']
+        }
+        
+        excluded_gender_tags = gender_exclusions.get(gender, [])
+        for excluded_tag in excluded_gender_tags:
+            if excluded_tag in tags_lower:
+                return True
+        
+        job_label_lower = job_label.lower() if job_label else ''
+        excluded_job_tags = job_exclusions.get(job_label_lower, [])
+        for excluded_tag in excluded_job_tags:
+            if excluded_tag in tags_lower:
+                return True
+        
+        return False
+    
+    @classmethod
     def filter_and_rank_projects(
         cls,
         projects: List,
@@ -205,6 +240,9 @@ class RecommendationService:
                     tags = project.tags_ia.get('tags', [])
                 elif isinstance(project.tags_ia, list):
                     tags = project.tags_ia
+            
+            if cls.should_exclude_project(tags, gender, job_label):
+                continue
             
             score = cls.calculate_relevance_score(tags, combined_text, user_topics, gender, race, job_label)
             
