@@ -131,6 +131,7 @@ const OnboardingPage = () => {
         id: createdUser.id,
         name: formData.firstName,
         job: formData.occupationDetail || formData.occupation,
+        job_label: formData.occupation,
         gender: formData.gender,
         race: formData.race,
         state: formData.state,

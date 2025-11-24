@@ -11,14 +11,16 @@ import {
 export const useNews = () => {
   const [newsItems, setNewsItems] = useState([]);
   const [userId, setUserId] = useState(null);
+  const [userProfile, setUserProfile] = useState(null);
 
   useEffect(() => {
     const storedProfile = localStorage.getItem('userProfile');
     if (storedProfile) {
-      const userProfile = JSON.parse(storedProfile);
-      if (userProfile.id) {
-        setUserId(userProfile.id);
-        fetchNewsApi(userProfile.id).then(data => setNewsItems(data));
+      const parsedProfile = JSON.parse(storedProfile);
+      if (parsedProfile.id) {
+        setUserId(parsedProfile.id);
+        setUserProfile(parsedProfile);
+        fetchNewsApi(parsedProfile.id).then(data => setNewsItems(data));
       }
     }
   }, []);
@@ -111,6 +113,7 @@ export const useNews = () => {
     handleLikeComment,
     handleAddComment,
     loadComments,
-    loadReactions
+    loadReactions,
+    userProfile
   };
 };
