@@ -40,6 +40,7 @@ E não para por aí: os comentários mais curtidos da comunidade são sintetizad
 - **PostgreSQL** - Banco de dados relacional
 - **APScheduler** - Agendamento de tarefas (notificações)
 - **Uvicorn** - Servidor ASGI
+- **N8n** - Popular o banco de dados com dados legislativos
 
 ### Inteligência Artificial
 - **Groq API** - LLM de alta velocidade (GPT-OSS-120B)
