@@ -142,7 +142,10 @@ class RecommendationService:
         cls,
         projeto_tags: List[str],
         projeto_text: str,
-        user_topics: List[str]
+        user_topics: List[str],
+        gender: str,
+        race: str,
+        job_label: str
     ) -> float:
 
         score = 0.0
@@ -150,15 +153,27 @@ class RecommendationService:
         projeto_text_lower = projeto_text.lower() if projeto_text else ''
         projeto_tags_lower = [tag.lower() for tag in (projeto_tags or [])]
 
+        gender_topics = cls.GENDER_TOPICS.get(gender, [])
+        race_topics = cls.RACE_TOPICS.get(race.lower() if race else '', [])
+        job_topics = cls.JOB_TOPICS.get(job_label.lower() if job_label else '', [])
+
         for topic in user_topics:
             topic_lower = topic.lower()
+            
+            weight = 1.0
+            if topic_lower in [t.lower() for t in gender_topics]:
+                weight = 5.0
+            elif topic_lower in [t.lower() for t in race_topics]:
+                weight = 4.5
+            elif topic_lower in [t.lower() for t in job_topics]:
+                weight = 4.0
+            
             if topic_lower in projeto_tags_lower:
-                score += 3.0
-        
-        for topic in user_topics:
-            topic_lower = topic.lower()
+                score += 10.0 * weight
+            
             occurrences = projeto_text_lower.count(topic_lower)
-            score += min(occurrences, 5)
+            if occurrences > 0:
+                score += min(occurrences * 2, 10) * weight
         
         return score
     
@@ -191,7 +206,7 @@ class RecommendationService:
                 elif isinstance(project.tags_ia, list):
                     tags = project.tags_ia
             
-            score = cls.calculate_relevance_score(tags, combined_text, user_topics)
+            score = cls.calculate_relevance_score(tags, combined_text, user_topics, gender, race, job_label)
             
             if score >= min_score:
                 scored_projects.append({
